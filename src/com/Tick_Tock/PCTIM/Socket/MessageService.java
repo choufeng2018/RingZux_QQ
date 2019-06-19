@@ -45,12 +45,7 @@ public class MessageService extends Thread
 	public void kill()
 	{
 		this.running = false;
-		try
-		{
-			this.finalize();
-		}
-		catch (Throwable e)
-		{e.printStackTrace();}
+		
 
 	}
 }

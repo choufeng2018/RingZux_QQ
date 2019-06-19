@@ -63,7 +63,7 @@ public class OutPutWindow extends BaseWindow
 	
 	public void print(String text){
 		this.textbox.addLine(text);
-		this.handleInput(new KeyStroke(KeyType.ArrowDown));
+		this.textbox.handleInput(new KeyStroke(KeyType.ArrowDown));
 	}
 
 

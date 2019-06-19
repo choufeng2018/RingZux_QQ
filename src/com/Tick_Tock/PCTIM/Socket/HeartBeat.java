@@ -55,13 +55,6 @@ public class HeartBeat implements Runnable
 	
 	public void kill(){
 		this.running = false;
-		try
-		{
-			this.finalize();
-		}
-		catch (Throwable e)
-		{e.printStackTrace();}
-		
 	}
 	
 }

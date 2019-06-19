@@ -34,28 +34,81 @@ public class QQRobot
 				{
 					if (file.endsWith(".jar"))
 					{
+
 						ClassLoader loader = new URLClassLoader(new URL[]{new URL("file://" + this.exact_directory + "/plugin/" + file)});
 						Class<?> pluginCls = loader.loadClass("com.robot.Main");
-						final Plugin plugin = (Plugin)pluginCls.newInstance();
-						plugins.add(plugin);
-						new Thread(){
-							@Override public void run()
+						final Plugin plugin = (Plugin)pluginCls.getDeclaredConstructor().newInstance();
+						if (plugin.name() != null)
+						{
+							if (Util.isactivatedplugin(plugin.name()))
 							{
-								plugin.onLoad(api);
+								this.plug(plugin);
 							}
-						}.start();
-						Util.log("[插件] 加载成功 [插件名]: " + plugin.name());
+						}
+						else
+						{
+							Util.log("[插件] 加载失败 : 插件名为null,拒绝加载. 文件名: " + file);
+						}
 					}
 				}
 			}
 		}
 		catch (Exception e)
 		{
-			System.out.println(e.toString());
+			e.printStackTrace();
 		}
-
+		Util.javarobot=this;
 	}
 
+	private void plug(final Plugin plugin)
+	{
+		plugins.add(plugin);
+		new Thread(){
+			@Override public void run()
+			{
+				plugin.onLoad(api);
+			}
+		}.start();
+		Util.log("[插件] 加载成功 [插件名]: " + plugin.name());
+		
+	}
+
+	
+	public void unplug(String pluginname){
+		Plugin targetplugin =null;
+		for(Plugin plugin:this.plugins){
+			if(plugin.name().equals(pluginname)){
+				targetplugin=plugin;
+				break;
+			}
+		}
+		this.plugins.remove(targetplugin);
+		Util.log("[插件] 卸载成功 [插件名]: " + targetplugin.name());
+	}
+	
+	public void plug(String filename){
+		
+		try
+		{
+			ClassLoader loader = new URLClassLoader(new URL[]{new URL("file://" + this.exact_directory + "/plugin/" + filename)});
+			Class<?> pluginCls = loader.loadClass("com.robot.Main");
+			final Plugin waitedplugin = (Plugin)pluginCls.getDeclaredConstructor().newInstance();
+			for(Plugin plugin:this.plugins){
+				if(plugin.name().equals(waitedplugin.name())){
+					return;
+				}
+			}
+			this.plug(waitedplugin);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+
+		}
+	}
+	
+	
+	
 	public void call(final QQMessage qqmessage)
 	{
 		for (final Plugin plugin : this.plugins)

@@ -54,10 +54,11 @@ done
 
 
 
-javac -encoding utf-8 -Xlint:unchecked -d $path/build -classpath $libs @$path/build/source.txt
+javac -Xlint:deprecation -encoding utf-8 -Xlint:unchecked -d $path/build -classpath $libs @$path/build/source.txt
 
 unzip $path/libs/lanterna.jar -d $path/build >/dev/null 2>&1
 cd $path/build
-jar cmf  $path/src/MANIFEST.MF  $path/bin/out.jar ./*
+cp $path/src/MANIFEST.MF ./META-INF
+zip -r  $path/bin/out.jar ./ >/dev/null
 
 

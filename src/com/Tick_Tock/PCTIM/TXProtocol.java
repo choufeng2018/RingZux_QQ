@@ -28,7 +28,7 @@ public class TXProtocol
 	
 	public int  WRedirectCount =0;
 	
-	public String DwServerIP  = Util.http_dns("sz.tencent.com");
+	public String DwServerIP  = Util.http_dns(Util.read_config("server_address"));
 	public short WServerPort  = 8000;
 	public List<byte[]>  WRedirectips = new ArrayList<byte[]>();
 	
@@ -57,7 +57,7 @@ public class TXProtocol
 	
 	public byte[] BufDhShareKey  = Util.str_to_byte("1A E9 7F 7D C9 73 75 98 AC 02 E0 80 5F A9 C6 AF");
 	
-	public String BufComputerName  = "马化腾的灵魂战妓";
+	public String BufComputerName  = Util.read_config("computername");
 	
 	public byte[] BufTgtgt ;
 	

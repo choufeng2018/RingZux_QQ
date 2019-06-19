@@ -43,6 +43,8 @@ public class MainApp extends Thread
 	private ChatListWindow chatlistwindow;
 
 	private List<Window> windows;
+
+	private PluginWindow pluginwindow;
 	
 
 	@Override public void run()
@@ -85,16 +87,7 @@ public class MainApp extends Thread
 
 	}
 
-	private void setallwheigetelement()
-	{
-		this.logoutputwindow.setlogsize(this.size, 1);
-		this.grouplistwindow.settablesize(this.size);
-		this.chatlistwindow.settablesize(this.size);
-		this.chatwindow.settextboxsize();
-		this.friendlistwindow.settablesize(this.size);
-		this.navigatorwindow.setbuttonposition();
-	}
-
+	
 	public void setvisiblewindow(Window _window)
 	{
 		for (Window window:this.windows)
@@ -147,6 +140,18 @@ public class MainApp extends Thread
 			});
 	}
 
+	private void setallwheigetelement()
+	{
+		this.logoutputwindow.setlogsize(this.size, 1);
+		this.grouplistwindow.settablesize(this.size);
+		this.chatlistwindow.settablesize(this.size);
+		this.chatwindow.settextboxsize();
+		this.friendlistwindow.settablesize(this.size);
+		this.navigatorwindow.setbuttonposition();
+		this.pluginwindow.settablesize(this.size);
+	}
+	
+	
 	private void addallllistenertowindow()
 	{
 		this.friendlistwindow.addWindowListener(this.listener);
@@ -155,6 +160,7 @@ public class MainApp extends Thread
 		this.navigatorwindow.addWindowListener(this.listener);
 		this.chatlistwindow.addWindowListener(this.listener);
 		this.logoutputwindow.addWindowListener(this.listener);
+		this.pluginwindow.addWindowListener(this.listener);
 	}
 
 	private void setallwindowposition()
@@ -165,6 +171,7 @@ public class MainApp extends Thread
 		this.logoutputwindow.setposition(this.size);
 		this.chatlistwindow.setposition(this.size);
 		this.navigatorwindow.setposition(this.size);
+		this.pluginwindow.setposition(this.size);
 	}
 
 	private void addallwindowtoui()
@@ -175,6 +182,7 @@ public class MainApp extends Thread
 		this.textGUI.addWindow(this.logoutputwindow);
 		this.textGUI.addWindow(this.navigatorwindow);
 		this.textGUI.addWindow(this.chatlistwindow);
+		this.textGUI.addWindow(this.pluginwindow);
 	}
 
 	private void setallwindowsize()
@@ -185,13 +193,23 @@ public class MainApp extends Thread
 		this.logoutputwindow.setsize(this.size);
 		this.chatlistwindow.setsize(this.size);
 		this.navigatorwindow.setsize(this.size);
+		this.pluginwindow.setsize(this.size);
 	}
 
 
 
 	private void initlistener()
 	{
-		this.listener = new listener().setnavigatorwindow(this.navigatorwindow).setlogwindow(this.logoutputwindow).setchatlistwindow(this.chatlistwindow).setchatwindow(this.chatwindow).setfriendwindow(this.friendlistwindow).setgroupwindow(this.grouplistwindow).settextgui(this.textGUI).setapp(this);
+		this.listener = new listener()
+		.setnavigatorwindow(this.navigatorwindow)
+		.setlogwindow(this.logoutputwindow)
+		.setchatlistwindow(this.chatlistwindow)
+		.setchatwindow(this.chatwindow)
+		.setfriendwindow(this.friendlistwindow)
+		.setgroupwindow(this.grouplistwindow)
+		.setpluginwindow(this.pluginwindow)
+		.settextgui(this.textGUI)
+		.setapp(this);
 	}
 
 	private void initwindows()
@@ -202,7 +220,8 @@ public class MainApp extends Thread
 		this.chatlistwindow = new ChatListWindow("",chatwindow,this);
 		this.logoutputwindow = new OutPutWindow("");
 		this.navigatorwindow = new NavigatorWindow();
-		this.windows =Arrays.asList(this.chatwindow, this.chatlistwindow, this.grouplistwindow, this.friendlistwindow, this.logoutputwindow);
+		this.pluginwindow = new PluginWindow("");
+		this.windows =Arrays.asList(this.chatwindow, this.chatlistwindow, this.grouplistwindow, this.friendlistwindow, this.logoutputwindow,this.pluginwindow);
 	}
 
 	private void initterminal() throws Exception
@@ -217,7 +236,6 @@ public class MainApp extends Thread
 
 	private void startloginprocess()
 	{
-		QQUser user = null ;
 		String qq =Util.read_property("account");
 		String password = Util.read_property("password");
 		byte[] passwordmd5=new byte[0];
@@ -277,6 +295,8 @@ class listener implements WindowListener
 
 	private OutPutWindow logwindow;
 
+	private PluginWindow pluginwindow;
+
 	public listener setapp(MainApp _app)
 	{
 		this.app = _app;
@@ -314,6 +334,11 @@ class listener implements WindowListener
 		this.logwindow = _window;
 		return this;
 	}
+	public listener setpluginwindow(PluginWindow _window)
+	{
+		this.pluginwindow = _window;
+		return this;
+	}
 	public listener settextgui(MultiWindowTextGUI _ui)
 	{
 		this.ui = _ui;
@@ -347,7 +372,10 @@ class listener implements WindowListener
 							this.app.setvisiblewindow(this.chatwindow);
 						}
 						break;
-
+					case " 插件列表":{
+							this.app.setvisiblewindow(this.pluginwindow);
+						}
+						break;
 				    default:{
 
 
@@ -420,6 +448,17 @@ class listener implements WindowListener
 			else if (p2.getKeyType() == KeyType.ArrowLeft)
 			{
 				this.ui.setActiveWindow(this.friendwindow);
+			}
+		}
+		
+		else if (p1 instanceof PluginWindow)
+		{
+			if (p2.getKeyType() == KeyType.ArrowUp)
+			{
+				if (PluginWindow.convertobj(p1).getrefreshbutton().isFocused())
+				{
+					this.ui.setActiveWindow(this.navigatorwindow);
+				}
 			}
 		}
 		else if (p1 instanceof OutPutWindow)

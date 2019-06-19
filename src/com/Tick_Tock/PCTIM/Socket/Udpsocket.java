@@ -29,7 +29,7 @@ public class Udpsocket
 		}
 		catch (Exception e)
 		{
-			System.out.println(e.getMessage());
+			e.printStackTrace();
 		}
 	}
 	
@@ -42,7 +42,7 @@ public class Udpsocket
 		}
 		catch (IOException e)
 		{
-			System.out.println(e.getMessage());
+			e.printStackTrace();
 		}
 	}
 								
@@ -57,7 +57,7 @@ public class Udpsocket
 		}
 		catch (IOException e)
 		{
-			System.out.println(e.toString());
+			e.printStackTrace();
 		}
 		
 	

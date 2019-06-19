@@ -23,12 +23,15 @@ public class ChatListWindow extends BaseWindow
 		super(title);
 		this.chatwindow=_chatwindow;
 		this.app=_app;
-		this.setHints(Arrays.asList(Window.Hint.FIXED_SIZE, Window.Hint.NO_POST_RENDERING));
+		super.setHints(Arrays.asList(Window.Hint.FIXED_SIZE, Window.Hint.NO_POST_RENDERING));
 		this.contentPanel = new Panel(new LinearLayout(Direction.VERTICAL)); // can hold multiple sub-components that will be added to a wind
 		this.table = new Table<String>("类型","QQ", "名称", "最后消息");
 		this.table.setSelectAction(new Runnable() {
 				@Override
 				public void run() {
+					if(table.getTableModel().getRowCount()==0){
+						return;
+					}
 					List<String> data = table.getTableModel().getRow(table.getSelectedRow());
 					if(data.get(0).equals("好友")){
 						ChatListWindow.this.chatwindow.onupdate(Long.parseLong(data.get(1)),1,data.get(2));

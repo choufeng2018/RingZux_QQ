@@ -16,6 +16,7 @@ import org.json.*;
 import com.Tick_Tock.PCTIM.Window.*;
 import com.googlecode.lanterna.gui2.*;
 import java.awt.image.*;
+import com.Tick_Tock.PCTIM.Robot.*;
 
 
 
@@ -87,6 +88,34 @@ public class Util
 	public static String NickName="";
 
 	public static ChatListWindow chatlistwindow;
+
+	public static LuaQQRobot luarobot;
+
+	public static QQRobot javarobot;
+
+	public static void setdeactivatedplugin(String name)
+	{
+		Util.write_pluginconfig(name,"false");
+	}
+
+	public static void setactivatedplugin(String name)
+	{
+		Util.write_pluginconfig(name,"true");
+	}
+
+	public static boolean isactivatedplugin(String name)
+	{
+		String record = Util.read_pluginconfig(name);
+		if(record==null){
+			return false;
+		}
+		if(record.equals("true")){
+			return true;
+		}else
+		{
+			return false;
+		}
+	}
 
 	
 	public static String getFriendnamebyuin(long Uin)
@@ -209,7 +238,7 @@ public class Util
 		}
 		catch (Exception e)
 		{  
-			System.out.println(e.toString());
+			e.printStackTrace();
 		}
 
 	}
@@ -285,7 +314,7 @@ public class Util
 		}
 		catch (Exception e)
 		{  
-			System.out.println(e.toString());
+			e.printStackTrace();
 		}
 
 
@@ -400,7 +429,7 @@ public class Util
 		}
 		catch (Exception e)
 		{  
-			System.out.println(e.toString());
+			e.printStackTrace();
 		}
 
 
@@ -449,7 +478,7 @@ public class Util
 		}
 		catch (Exception e)
 		{  
-			System.out.println(e.toString());
+			e.printStackTrace();
 		}
 
 
@@ -487,7 +516,7 @@ public class Util
 		}
 		catch (Exception e)
 		{  
-			System.out.println(e.toString());
+			e.printStackTrace();
 		}
 
 
@@ -536,7 +565,6 @@ public class Util
 	
 	public static boolean isvalidimg(byte[] data)
 	{
-		final String base = "@#&$%*o!;.";// 字符串由复杂到简单
 		BufferedImage image = null;
 		try
 		{
@@ -661,7 +689,7 @@ public class Util
 		}
 		catch (IOException e)
 		{
-			System.out.println(e.getMessage());
+			e.printStackTrace();
 		}
 		// 获取key对应的value值
 		return properties.getProperty(key);
@@ -669,7 +697,7 @@ public class Util
 	}
 	public static String read_config(String key)
 	{
-		File property_file = new File(Util.get_root_path() + "/config/Settings.conf");
+		File property_file = new File(Util.get_root_path() + "/config/settings.conf");
 		Properties properties = new Properties();
 
 		// 使用InPutStream流读取properties文件
@@ -686,12 +714,40 @@ public class Util
 		}
 		catch (IOException e)
 		{
-			System.out.println(e.getMessage());
+			e.printStackTrace();
 		}
 		// 获取key对应的value值
 		return properties.getProperty(key);
 
 	}
+	
+	public static String read_pluginconfig(String key)
+	{
+		File property_file = new File(Util.get_root_path() + "/config/plugin.conf");
+		Properties properties = new Properties();
+
+		// 使用InPutStream流读取properties文件
+		try
+		{
+			if (!property_file.exists())
+			{
+				property_file.createNewFile();
+			}
+
+			BufferedReader bufferedReader = new BufferedReader(new FileReader(property_file));
+
+			properties.load(bufferedReader);
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+		// 获取key对应的value值
+		return properties.getProperty(key);
+
+	}
+	
+	
 	public static void write_property(String key, String value)
 	{
 		File property_file = new File(Util.get_root_path() + "/config/record.conf");
@@ -714,11 +770,65 @@ public class Util
 		}
 		catch (IOException e)
 		{
-			System.out.println(e.getMessage());
+			e.printStackTrace();
 		}
 
 	}
 
+	public static void write_config(String key, String value)
+	{
+		File property_file = new File(Util.get_root_path() + "/config/settings.conf");
+		Properties properties = new Properties();
+		// 使用InPutStream流读取properties文件
+		try
+		{
+			if (!property_file.exists())
+			{
+				property_file.createNewFile();
+			}
+			BufferedReader bufferedReader = new BufferedReader(new FileReader(property_file));
+
+			properties.load(bufferedReader);
+			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(property_file)));
+
+			properties.setProperty(key, value);
+			properties.store(bw, value);
+
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+
+	}
+	
+	public static void write_pluginconfig(String key, String value)
+	{
+		File property_file = new File(Util.get_root_path() + "/config/plugin.conf");
+		Properties properties = new Properties();
+		// 使用InPutStream流读取properties文件
+		try
+		{
+			if (!property_file.exists())
+			{
+				property_file.createNewFile();
+			}
+			BufferedReader bufferedReader = new BufferedReader(new FileReader(property_file));
+
+			properties.load(bufferedReader);
+			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(property_file)));
+
+			properties.setProperty(key, value);
+			properties.store(bw, value);
+
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+
+	}
+	
 	public static String get_root_path()
 	{
 		File directory = new File("");
@@ -730,14 +840,24 @@ public class Util
 		}
 		catch (Exception e)
 		{
-			System.out.println(e.getMessage());
+			e.printStackTrace();
 		}
 		return exact_directory;
 	}
 
 
 
-
+	public static void log(Object string)
+	{
+		SimpleDateFormat format0 = new SimpleDateFormat("[HH:mm:ss]");
+        String log = format0.format(new Date().getTime());
+		if(output==null){
+			System.out.println(""+string);
+			return;
+		}
+		output.print(log + " " + string);
+	}
+	
 
 	public static void log(String string)
 	{
@@ -857,7 +977,7 @@ public class Util
 		}
 		catch (Exception e)
 		{  
-			System.out.println(e.toString());
+			e.printStackTrace();
 		}
 		return null;
 	}
@@ -890,7 +1010,7 @@ public class Util
         //尝试发送请求
         try
 		{
-			u = new URL("http://" + Util.http_dns("htdata2.qq.com") + "/cgi-bin/httpconn?htcmd=0x6ff0071&ver=5515&term=pc&ukey=" + Util.byte2HexString(keystore.ukey).replace(" ", "") + "&filesize=" + getfilelength(file) + "&range=0&uin=" + user.QQ + "&groupcode=" + store.Group);
+			u = new URL("http://" + Util.http_dns(Util.read_config("upload_img_address")) + "/cgi-bin/httpconn?htcmd=0x6ff0071&ver=5515&term=pc&ukey=" + Util.byte2HexString(keystore.ukey).replace(" ", "") + "&filesize=" + getfilelength(file) + "&range=0&uin=" + user.QQ + "&groupcode=" + store.Group);
 			con = (HttpURLConnection) u.openConnection();
             con.setRequestMethod("POST");
             con.setDoOutput(true);
@@ -1020,7 +1140,7 @@ public class Util
 		}
 		catch (Exception e)
 		{
-			System.out.println(e.toString());
+			e.printStackTrace();
 		}
 		return img_to_send;
 	}

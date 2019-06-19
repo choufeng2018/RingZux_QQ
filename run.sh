@@ -25,4 +25,4 @@ if ! which java >/dev/null;then
 fi
 
 
-java -Dfile.encoding=utf-8 -Xbootclasspath/a:$libs -jar $path/bin/out.jar $qqnum $qqpasswd $websocket_server
+java -Dfile.encoding=utf-8 -Xbootclasspath/a:$libs -Djava.awt.headless=true -jar $path/bin/out.jar

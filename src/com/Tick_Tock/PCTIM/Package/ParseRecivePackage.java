@@ -51,12 +51,7 @@ public int PackageLength = 0;
 
 	public void kill()
 	{
-		try
-		{
-			this.finalize();
-		}
-		catch (Throwable e)
-		{e.printStackTrace();}
+		
 	}
 	
 	
