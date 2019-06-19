@@ -25,4 +25,4 @@ if ! which java >/dev/null;then
 fi
 
 
-java -Dfile.encoding=utf-8 -Xbootclasspath/a:$libs -Djava.awt.headless=true -jar $path/bin/out.jar
+java -Xms256m -Xmx1024m -Dfile.encoding=utf-8 -Xbootclasspath/a:$libs -Djava.awt.headless=true -jar $path/bin/out.jar

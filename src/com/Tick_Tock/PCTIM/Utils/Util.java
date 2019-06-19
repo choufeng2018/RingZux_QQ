@@ -40,7 +40,7 @@ class textimg{
 		if(this.getminindex(data)!=-1&&this.minindex>this.getminindex(data)){
 			this.minindex=this.getminindex(data);
 		}
-		
+
 	}
 
 	public int getminindex(String data){
@@ -77,8 +77,8 @@ class textimg{
 
 public class Util
 {
-	
-	
+
+
 	public static ChatWindow chatwindow=null;
 	public static String ua = "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.186 Safari/537.36";
 
@@ -92,6 +92,8 @@ public class Util
 	public static LuaQQRobot luarobot;
 
 	public static QQRobot javarobot;
+
+	public static boolean openlog =Boolean.valueOf(Util.read_config("activate_log"));
 
 	public static void setdeactivatedplugin(String name)
 	{
@@ -117,17 +119,17 @@ public class Util
 		}
 	}
 
-	
+
 	public static String getFriendnamebyuin(long Uin)
 	{
 		try{
-		for (Friend_List.Friend friend:Util.api.getfriendlist().members){
-			if(friend.friend_uin==Uin){
-				return friend.friend_name;
+			for (Friend_List.Friend friend:Util.api.getfriendlist().members){
+				if(friend.friend_uin==Uin){
+					return friend.friend_name;
+				}
 			}
-		}
 		}catch(Exception e){
-			
+
 		}
 		return "未获取到好友名";
 	}
@@ -135,17 +137,17 @@ public class Util
 	public static String getGroupnamebyuin(long group_uin)
 	{
 		try{
-		for (Group_List.Group group:Util.api.getgrouplist().getall_group()){
-			if(group.group_uin==group_uin){
-				return group.group_name;
+			for (Group_List.Group group:Util.api.getgrouplist().getall_group()){
+				if(group.group_uin==group_uin){
+					return group.group_name;
+				}
 			}
-		}
 		}catch(Exception e){
 		}
 		return "未获取到群名";
 	}
 
-	
+
 	public static void SendMessage(int chattype, Long uin, String text)
 	{
 		if(Util.api!=null){
@@ -164,19 +166,19 @@ public class Util
 			Util.chatlistwindow.onmessage(qqmessage);
 		}
 		if(qqmessage.Group_uin!=0){
-			
+
 			if(Util.chatwindow!=null&&qqmessage.Group_uin==chatwindow.uin&&chatwindow.chattype==2){
 				Util.chatwindow.onothers(qqmessage);
 			}
 		}else{
-			
+
 			if(Util.chatwindow!=null&&qqmessage.Sender_Uin==chatwindow.uin&&chatwindow.chattype==1){
 				Util.chatwindow.onothers(qqmessage);
 			}
 		}
 	}
 
-	
+
 	public static void self(QQMessage qqmessage)
 	{
 		if(Util.chatlistwindow!=null){
@@ -188,14 +190,14 @@ public class Util
 			}
 		}
 	}
-	
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
+
+
 	public static void getfriendlist(QQUser user)
 	{
 		try
@@ -256,9 +258,9 @@ public class Util
 				{
 					JSONObject root_result_0_memsx = root_result_0_mems.getJSONObject(i);
 					friendlist.members.add(friendlist.getfriendobj().set_friend_name(root_result_0_memsx.getString("name")).set_friend_uin(root_result_0_memsx.getLong("uin")));
-									}
+				}
 			}
-			
+
 			return friendlist;
 		}
 		catch (JSONException e)
@@ -337,35 +339,35 @@ public class Util
 				}
 			}
 			try{
-			JSONArray root_manage = root.getJSONArray("manage");
-			if (root_manage != null)
-			{
-				for (int i=0;i < root_manage.length();i += 1)
+				JSONArray root_manage = root.getJSONArray("manage");
+				if (root_manage != null)
 				{
-					JSONObject root_managex = root_manage.getJSONObject(i);
-					grouplist.managed_group.add(grouplist.getgroupobj().set_group_name(root_managex.getString("gn")).set_group_uin(root_managex.getLong("gc")).set_owner_uin(root_managex.getLong("owner")));
+					for (int i=0;i < root_manage.length();i += 1)
+					{
+						JSONObject root_managex = root_manage.getJSONObject(i);
+						grouplist.managed_group.add(grouplist.getgroupobj().set_group_name(root_managex.getString("gn")).set_group_uin(root_managex.getLong("gc")).set_owner_uin(root_managex.getLong("owner")));
+					}
 				}
-			}
 			}catch (JSONException e)
 			{
-			
+
 			}
 			try{
-			JSONArray root_create = root.getJSONArray("create");
-			if (root_create != null)
-			{
-				for (int i=0;i < root_create.length();i += 1)
+				JSONArray root_create = root.getJSONArray("create");
+				if (root_create != null)
 				{
-					JSONObject root_createx = root_create.getJSONObject(i);
-					grouplist.created_group.add(grouplist.getgroupobj().set_group_name(root_createx.getString("gn")).set_group_uin(root_createx.getLong("gc")).set_owner_uin(root_createx.getLong("owner")));
+					for (int i=0;i < root_create.length();i += 1)
+					{
+						JSONObject root_createx = root_create.getJSONObject(i);
+						grouplist.created_group.add(grouplist.getgroupobj().set_group_name(root_createx.getString("gn")).set_group_uin(root_createx.getLong("gc")).set_owner_uin(root_createx.getLong("owner")));
+					}
 				}
-			}
-			
+
 			}catch (JSONException e)
 			{
-				
+
 			}
-			
+
 			return grouplist;
 		}
 		catch (JSONException e)
@@ -531,7 +533,7 @@ public class Util
 
 	private static Date BaseDateTime = new Date(0);
 
-	
+
 	public static String gettextimg(byte[] data)
 	{
 		final String base = "@#&$%*o!;.";// 字符串由复杂到简单
@@ -561,8 +563,8 @@ public class Util
 
 		return timg.getresultString();
 	}
-	
-	
+
+
 	public static boolean isvalidimg(byte[] data)
 	{
 		BufferedImage image = null;
@@ -574,12 +576,12 @@ public class Util
 		{
 			return false;
 		}
-		
+
 		return true;
 	}
-		
-	
-	
+
+
+
 	public static boolean display_verifpic(byte[] data)
 	{
 		final String base = "@#&$%*o!;.";// 字符串由复杂到简单
@@ -639,35 +641,35 @@ public class Util
 	}
 
 	/*public static BufferedImage  zoomOutImage(BufferedImage  originalImage, float times)
-	{
+	 {
 
-		int width = new Float(originalImage.getWidth() / times).intValue();
-		if (width < 0)
-		{
-			width = originalImage.getWidth();
-		}
-		int height = new Float(originalImage.getHeight() / times).intValue();
-		if (height < 0)
-		{
-			height = originalImage.getHeight();
-		}
-		if (times == -1)
-		{
-			width = 0;
-			height = 0;
-		}
-		BufferedImage newImage = new BufferedImage(width, height, originalImage.getType());
+	 int width = new Float(originalImage.getWidth() / times).intValue();
+	 if (width < 0)
+	 {
+	 width = originalImage.getWidth();
+	 }
+	 int height = new Float(originalImage.getHeight() / times).intValue();
+	 if (height < 0)
+	 {
+	 height = originalImage.getHeight();
+	 }
+	 if (times == -1)
+	 {
+	 width = 0;
+	 height = 0;
+	 }
+	 BufferedImage newImage = new BufferedImage(width, height, originalImage.getType());
 
-		Graphics g = newImage.getGraphics();
+	 Graphics g = newImage.getGraphics();
 
-		g.drawImage(originalImage, 0, 0, width, height, null);
+	 g.drawImage(originalImage, 0, 0, width, height, null);
 
-		g.dispose();
+	 g.dispose();
 
-		return newImage;
+	 return newImage;
 
-	}
-	*/
+	 }
+	 */
 
 
 	public static String read_property(String key)
@@ -720,7 +722,7 @@ public class Util
 		return properties.getProperty(key);
 
 	}
-	
+
 	public static String read_pluginconfig(String key)
 	{
 		File property_file = new File(Util.get_root_path() + "/config/plugin.conf");
@@ -746,8 +748,8 @@ public class Util
 		return properties.getProperty(key);
 
 	}
-	
-	
+
+
 	public static void write_property(String key, String value)
 	{
 		File property_file = new File(Util.get_root_path() + "/config/record.conf");
@@ -801,7 +803,7 @@ public class Util
 		}
 
 	}
-	
+
 	public static void write_pluginconfig(String key, String value)
 	{
 		File property_file = new File(Util.get_root_path() + "/config/plugin.conf");
@@ -828,7 +830,7 @@ public class Util
 		}
 
 	}
-	
+
 	public static String get_root_path()
 	{
 		File directory = new File("");
@@ -847,20 +849,23 @@ public class Util
 
 
 
-	public static void log(Object string)
+	synchronized public static void log(Object string)
 	{
-		SimpleDateFormat format0 = new SimpleDateFormat("[HH:mm:ss]");
-        String log = format0.format(new Date().getTime());
-		if(output==null){
-			System.out.println(""+string);
-			return;
+		if(Util.openlog){
+			SimpleDateFormat format0 = new SimpleDateFormat("[HH:mm:ss]");
+			String log = format0.format(new Date().getTime());
+			if(output==null){
+				System.out.println(""+string);
+				return;
+			}
+			output.print(log + " " + string);
 		}
-		output.print(log + " " + string);
 	}
-	
 
-	public static void log(String string)
+
+	synchronized public static void log(String string)
 	{
+		if(Util.openlog){
 		SimpleDateFormat format0 = new SimpleDateFormat("[HH:mm:ss]");
         String log = format0.format(new Date().getTime());
 		if(output==null){
@@ -868,6 +873,7 @@ public class Util
 			return;
 		}
 		output.print(log + " " + string);
+		}
 	}
 
 	public static byte[] reverse_byte(byte[] data)

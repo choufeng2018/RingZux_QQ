@@ -40,7 +40,7 @@ public class OutPutWindow extends BaseWindow
 	}
 
 	@Override public void setsize(TerminalSize size){
-		this.setSize(new TerminalSize(size.getColumns(),size.getRows()/10*9));
+		this.setSize(new TerminalSize(size.getColumns()-2,size.getRows()/10*9));
 	}
 
 	@Override public void setposition(TerminalSize size){

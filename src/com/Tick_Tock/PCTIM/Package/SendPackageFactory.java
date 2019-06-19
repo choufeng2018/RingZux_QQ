@@ -513,6 +513,7 @@ public class SendPackageFactory
 				}
 
 		}
+		Util.log("hhhhhh");
 		Crypter crypter = new Crypter();
 		byte[] result = crypter.encrypt(body_builder.getdata(),user.TXProtocol.SessionKey);
 		builder.writebytes(result);

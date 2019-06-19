@@ -27,7 +27,7 @@ public class GroupListWindow extends BaseWindow
 		this.chatwindow=_chatwindow;
 		this.setHints(Arrays.asList(Window.Hint.FIXED_SIZE,Window.Hint.NO_POST_RENDERING));
 		this.contentPanel = new Panel(new LinearLayout(Direction.VERTICAL)); // can hold multiple sub-components that will be added to a wind
-		this.table= new Table<String>("QQ","群名称");
+		this.table= new Table<String>("群号码","群名称");
 		this.table.setSelectAction(new Runnable() {
 				@Override
 				public void run() {
@@ -50,7 +50,7 @@ public class GroupListWindow extends BaseWindow
 	}
 	
 	@Override public void setsize(TerminalSize size){
-		this.setSize(new TerminalSize(size.getColumns()/2,size.getRows()/10*9));
+		this.setSize(new TerminalSize(size.getColumns()/2-2,size.getRows()/10*9));
 	}
 
 	@Override public void setposition(TerminalSize size){
