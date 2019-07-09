@@ -1,5 +1,5 @@
 
-![image](https://github.com/Saint-Theana/RingZux_QQ/raw/master/screenshot/Screenshot_20190709-193808.png)
+![image](https://github.com/Saint-Theana/RingZux_QQ/raw/master/screenshot/Screenshot_20190710-003513.png)
 ![image](https://github.com/Saint-Theana/RingZux_QQ/raw/master/screenshot/1.png)
 ![image](https://github.com/Saint-Theana/RingZux_QQ/raw/master/screenshot/2.png)
 ![image](https://github.com/Saint-Theana/RingZux_QQ/raw/master/screenshot/3.png)
