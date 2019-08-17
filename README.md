@@ -18,7 +18,7 @@ https://saint-theana.github.io/Androidqq_Protocol_Doc/
             * - [x] amr
         * - [x] 发送xml消息
         * - [x] 发送json消息
-    *发送方向
+    * 发送方向
         * - [x] 讨论组
         * - [x] 群
         * - [x] 好友
