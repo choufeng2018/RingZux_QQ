@@ -1,7 +1,7 @@
 安卓qq协议文档:
 https://saint-theana.github.io/Androidqq_Protocol_Doc/
 
-* 发送监听
+* 监听消息
     * 监听方向
         * - [x] 讨论组
         * - [x] 群
