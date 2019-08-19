@@ -1,6 +1,6 @@
 安卓qq协议文档:
-https://saint-theana.github.io/Androidqq_Protocol_Doc/
-功能列表:https://docs.qq.com/blankpage/DWVpocHRHa0xITXdS?disableReturnList=1&_from=1&preview_token=&coord=A1A0A0&tab=BB08J2
+https://saint-theana.github.io/Androidqq_Protocol_Doc/<br>
+功能列表:https://docs.qq.com/blankpage/DWVpocHRHa0xITXdS?disableReturnList=1&_from=1&preview_token=&coord=A1A0A0&tab=BB08J2<br>
 功能列表:
 * 监听消息
     * 监听方向
