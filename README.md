@@ -12,7 +12,7 @@ https://saint-theana.github.io/Androidqq_Protocol_Doc/
         * - [x] 发送图片消息
             * - [x] jpg
             * - [x] png
-            * - [ ] gif
+            * - [x] gif
         * - [x] 发送语音消息
             * - [x] silk
             * - [x] amr
@@ -34,6 +34,7 @@ https://saint-theana.github.io/Androidqq_Protocol_Doc/
     * - [x] 好友请求
         * - [x] 监听
         * - [x] 处理
+    * - [x] 加好友
     * - [x] 监听新人入群
     * - [ ] 监听好友增加
     * - [x] 监听消息撤回
