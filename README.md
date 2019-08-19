@@ -1,6 +1,13 @@
 安卓qq协议文档:
 https://saint-theana.github.io/Androidqq_Protocol_Doc/
 
+* 发送监听
+    * 监听方向
+        * - [x] 讨论组
+        * - [x] 群
+        * - [x] 好友
+        * - [x] 群成员临时
+
 * 发送消息
     * 消息类型
         * - [x] 发送文本消息(大概300多字以内)
@@ -35,6 +42,7 @@ https://saint-theana.github.io/Androidqq_Protocol_Doc/
         * - [x] 监听
         * - [x] 处理
     * - [x] 加好友
+    * - [ ] 加群
     * - [x] 监听新人入群
     * - [ ] 监听好友增加
     * - [x] 监听消息撤回
