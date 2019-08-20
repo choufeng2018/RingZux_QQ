@@ -46,7 +46,7 @@ https://saint-theana.github.io/Androidqq_Protocol_Doc/<br>
     * - [x] 加好友
     * - [ ] 加群
     * - [x] 监听新人入群
-    * - [ ] 监听好友增加
+    * - [x] 监听好友增加
     * - [x] 监听消息撤回
     * - [x] 获取群列表
     * - [x] 获取好友列表
