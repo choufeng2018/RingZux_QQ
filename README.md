@@ -16,8 +16,8 @@ https://saint-theana.github.io/Androidqq_Protocol_Doc/<br>
         * - [x] 发送长文本消息(大约3500个字左右)
         * - [x] 表情
         * - [x] 艾特
-             * - [x] 单体(多个)
-             * - [x] 全体
+            * - [x] 单体(多个)
+            * - [x] 全体
         * - [x] 发送图片消息
             * - [x] jpg
             * - [x] png
