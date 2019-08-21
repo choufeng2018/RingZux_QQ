@@ -65,7 +65,7 @@ https://saint-theana.github.io/Androidqq_Protocol_Doc/<br>
 
 声明:
 
-本项目由纯java代码开发，核心代码为pcqq协议，翻译自网络上其他开源的pcqq协议代码，使用本项目代码产生的任何后果与本人无关。
+本项目由纯java代码开发，核心代码为叩叩协议，翻译自网络上其他开源的代码，使用本项目代码产生的任何后果与本人无关。
 
 功能:
 
