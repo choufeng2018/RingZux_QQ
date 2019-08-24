@@ -42,8 +42,8 @@ https://saint-theana.github.io/Androidqq_Protocol_Doc/<br>
     * - [x] 发群red包
         * - [x] 普通red包
         * - [x] 拼手气red包
-    * - [ ] 发好友red包
-        * - [ ] 普通red包
+    * - [x] 发好友red包
+        * - [x] 普通red包
     * - [x] 禁言
         * - [x] 单体
         * - [x] 全体
