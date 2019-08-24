@@ -34,6 +34,16 @@ https://saint-theana.github.io/Androidqq_Protocol_Doc/<br>
         * - [x] 群成员临时
         
 * 其他功能
+    * - [x] 监听/抢群red包
+        * - [x] 拼手气red包
+        * - [x] 普通red包
+    * - [x] 监听/抢好友red包
+        * - [x] 普通red包
+    * - [x] 发群red包
+        * - [x] 普通red包
+        * - [x] 拼手气red包
+    * - [ ] 发好友red包
+        * - [ ] 普通red包
     * - [x] 禁言
         * - [x] 单体
         * - [x] 全体
@@ -43,11 +53,6 @@ https://saint-theana.github.io/Androidqq_Protocol_Doc/<br>
     * - [x] 好友请求
         * - [x] 监听
         * - [x] 处理
-    * - [x] 监听/抢群红包
-        * - [x] 拼手气红包
-        * - [x] 普通红包
-    * - [x] 监听/抢好友红包
-        * - [x] 普通红包
     * - [x] 加好友
     * - [x] 加群
     * - [x] 名片赞
