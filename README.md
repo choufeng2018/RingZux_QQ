@@ -38,8 +38,10 @@ https://saint-theana.github.io/Androidqq_Protocol_Doc/<br>
     * - [x] 监听/抢群red包
         * - [x] 拼手气red包
         * - [x] 普通red包
+        * - [x] 口令红包
     * - [x] 监听/抢好友red包
         * - [x] 普通red包
+        * - [x] 口令红包
     * - [x] 发群red包
         * - [x] 普通red包
         * - [x] 拼手气red包
