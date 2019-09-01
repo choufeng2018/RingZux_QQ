@@ -58,6 +58,7 @@ https://saint-theana.github.io/Androidqq_Protocol_Doc/<br>
     * - [x] 好友请求
         * - [x] 监听
         * - [x] 处理
+    * - [x] 发送群文件
     * - [x] 加好友
     * - [x] 加群
     * - [x] 名片赞
