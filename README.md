@@ -59,6 +59,8 @@ https://saint-theana.github.io/Androidqq_Protocol_Doc/<br>
         * - [x] 监听
         * - [x] 处理
     * - [x] 群文件
+        * - [x] 监听
+        * - [x] 下载
         * - [x] 发送
     * - [x] 好友文件
         * - [x] 监听
