@@ -4,6 +4,7 @@
 安卓叩叩协议文档:
 https://saint-theana.github.io/Androidqq_Protocol_Doc/<br>
 部分功能演示:https://b23.tv/av65388267<br>
+部分功能演示2:https://b23.tv/av66492743<br>
 功能列表:https://docs.qq.com/blankpage/DWVpocHRHa0xITXdS?disableReturnList=1&_from=1&preview_token=&coord=A1A0A0&tab=BB08J2<br>
 功能列表:(可收发红包)
 * 监听消息
