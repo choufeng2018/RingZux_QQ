@@ -1,22 +1,19 @@
 package com.Tick_Tock.PCTIM.Utils;
-import java.io.*;
-import java.util.*;
-import java.nio.*;
-import java.security.MessageDigest;
-import java.security.*;
-import java.net.*;
 import com.Tick_Tock.PCTIM.*;
-import java.util.zip.*;
 import com.Tick_Tock.PCTIM.Message.*;
-import javax.imageio.ImageIO;
 import com.Tick_Tock.PCTIM.sdk.*;
+import io.netty.buffer.*;
+import java.awt.image.*;
+import java.io.*;
+import java.net.*;
+import java.nio.*;
+import java.security.*;
 import java.text.*;
+import java.util.*;
+import java.util.zip.*;
+import javax.imageio.*;
 import javax.net.ssl.*;
 import org.json.*;
-import com.Tick_Tock.PCTIM.Window.*;
-import com.googlecode.lanterna.gui2.*;
-import java.awt.image.*;
-import com.Tick_Tock.PCTIM.Robot.*;
 
 
 
@@ -78,124 +75,53 @@ class textimg{
 public class Util
 {
 
+	public static byte[] bytefromfile(String file_name)
+	{
 
-	public static ChatWindow chatwindow=null;
+		try
+		{
+			InputStream in = new FileInputStream(file_name);
+
+			byte[] data = Util.toByteArray(in);
+			in.close();
+
+			return data;
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		return null;
+
+	}
+	
+	private static byte[] toByteArray(InputStream in) throws IOException {
+
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		byte[] buffer = new byte[1024 * 4];
+		int n = 0;
+		while ((n = in.read(buffer)) != -1) {
+			out.write(buffer, 0, n);
+		}
+		return out.toByteArray();
+	}
+	
+	public static byte[] bufToBytes(ByteBuf buf)
+	{
+		byte[] h =new byte[buf.readableBytes()];
+		buf.readBytes(h);
+		buf.readerIndex(0);//必须把指针调回0
+		return h;
+	}
+
+	
 	public static String ua = "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.186 Safari/537.36";
 
-	public static OutPutWindow output;
-	public static API api = null;
-
-	public static String NickName="";
-
-	public static ChatListWindow chatlistwindow;
-
-	public static LuaQQRobot luarobot;
-
-	public static QQRobot javarobot;
-
+	
+		
 	public static boolean openlog =Boolean.valueOf(Util.read_config("activate_log"));
 
-	public static void setdeactivatedplugin(String name)
-	{
-		Util.write_pluginconfig(name,"false");
-	}
-
-	public static void setactivatedplugin(String name)
-	{
-		Util.write_pluginconfig(name,"true");
-	}
-
-	public static boolean isactivatedplugin(String name)
-	{
-		String record = Util.read_pluginconfig(name);
-		if(record==null){
-			return false;
-		}
-		if(record.equals("true")){
-			return true;
-		}else
-		{
-			return false;
-		}
-	}
-
-
-	public static String getFriendnamebyuin(long Uin)
-	{
-		try{
-			for (Friend_List.Friend friend:Util.api.getfriendlist().members){
-				if(friend.friend_uin==Uin){
-					return friend.friend_name;
-				}
-			}
-		}catch(Exception e){
-
-		}
-		return "未获取到好友名";
-	}
-
-	public static String getGroupnamebyuin(long group_uin)
-	{
-		try{
-			for (Group_List.Group group:Util.api.getgrouplist().getall_group()){
-				if(group.group_uin==group_uin){
-					return group.group_name;
-				}
-			}
-		}catch(Exception e){
-		}
-		return "未获取到群名";
-	}
-
-
-	public static void SendMessage(int chattype, Long uin, String text)
-	{
-		if(Util.api!=null){
-			if(chattype==2){
-			    Util.api.SendGroupMessage(new MessageFactory().setgroupuin(uin).setmessage(text));
-			}else if(chattype==1){
-				Util.api.SendFriendMessage(new MessageFactory().setfrienduin(uin).setmessage(text));
-				Util.chatwindow.onself(new QQMessage().setsendername(Util.NickName).setmessage(text));
-			}
-		}
-	}
-
-	public static void chat(QQMessage qqmessage)
-	{
-		if(Util.chatlistwindow!=null){
-			Util.chatlistwindow.onmessage(qqmessage);
-		}
-		if(qqmessage.Group_uin!=0){
-
-			if(Util.chatwindow!=null&&qqmessage.Group_uin==chatwindow.uin&&chatwindow.chattype==2){
-				Util.chatwindow.onothers(qqmessage);
-			}
-		}else{
-
-			if(Util.chatwindow!=null&&qqmessage.Sender_Uin==chatwindow.uin&&chatwindow.chattype==1){
-				Util.chatwindow.onothers(qqmessage);
-			}
-		}
-	}
-
-
-	public static void self(QQMessage qqmessage)
-	{
-		if(Util.chatlistwindow!=null){
-			Util.chatlistwindow.onmessage(qqmessage);
-		}
-		if(qqmessage.Group_uin!=0){
-			if(Util.chatwindow!=null&&qqmessage.Group_uin==chatwindow.uin&&chatwindow.chattype==2){
-				Util.chatwindow.onself(qqmessage);
-			}
-		}
-	}
-
-
-
-
-
-
+	
 
 
 	public static void getfriendlist(QQUser user)
@@ -379,11 +305,6 @@ public class Util
 
 	}
 
-
-
-
-
-
 	public static void getquncookie(QQUser user)
 	{
 
@@ -425,16 +346,11 @@ public class Util
 			String url = connection.getHeaderField("Location");
 			fuck(url, user);
 			connection.disconnect();// 断开连接  
-
-
-
 		}
 		catch (Exception e)
 		{  
 			e.printStackTrace();
 		}
-
-
 	}
 
 	public static void fuck(String url, QQUser user)
@@ -513,22 +429,12 @@ public class Util
 			String cookie = connection.getHeaderField("Set-Cookie");
 			System.out.println(cookie);
 			connection.disconnect();// 断开连接  
-
-
 		}
 		catch (Exception e)
 		{  
 			e.printStackTrace();
 		}
-
-
 	}
-
-
-
-
-
-
 
 
 	private static Date BaseDateTime = new Date(0);
@@ -560,13 +466,15 @@ public class Util
 			}
 			timg.addline(t);
 		}
-
 		return timg.getresultString();
 	}
 
 
 	public static boolean isvalidimg(byte[] data)
 	{
+		if(data.length%700==0){
+			return false;
+		}
 		BufferedImage image = null;
 		try
 		{
@@ -579,8 +487,6 @@ public class Util
 
 		return true;
 	}
-
-
 
 	public static boolean display_verifpic(byte[] data)
 	{
@@ -639,37 +545,6 @@ public class Util
 		return ImageIO.read(stream);
 
 	}
-
-	/*public static BufferedImage  zoomOutImage(BufferedImage  originalImage, float times)
-	 {
-
-	 int width = new Float(originalImage.getWidth() / times).intValue();
-	 if (width < 0)
-	 {
-	 width = originalImage.getWidth();
-	 }
-	 int height = new Float(originalImage.getHeight() / times).intValue();
-	 if (height < 0)
-	 {
-	 height = originalImage.getHeight();
-	 }
-	 if (times == -1)
-	 {
-	 width = 0;
-	 height = 0;
-	 }
-	 BufferedImage newImage = new BufferedImage(width, height, originalImage.getType());
-
-	 Graphics g = newImage.getGraphics();
-
-	 g.drawImage(originalImage, 0, 0, width, height, null);
-
-	 g.dispose();
-
-	 return newImage;
-
-	 }
-	 */
 
 
 	public static String read_property(String key)
@@ -849,31 +724,12 @@ public class Util
 
 
 
-	synchronized public static void log(Object string)
-	{
-		if(Util.openlog){
-			SimpleDateFormat format0 = new SimpleDateFormat("[HH:mm:ss]");
-			String log = format0.format(new Date().getTime());
-			if(output==null){
-				System.out.println(""+string);
-				return;
-			}
-			output.print(log + " " + string);
-		}
-	}
-
-
+	
 	synchronized public static void log(String string)
 	{
-		if(Util.openlog){
 		SimpleDateFormat format0 = new SimpleDateFormat("[HH:mm:ss]");
         String log = format0.format(new Date().getTime());
-		if(output==null){
-			System.out.println(string);
-			return;
-		}
-		output.print(log + " " + string);
-		}
+		
 	}
 
 	public static byte[] reverse_byte(byte[] data)
@@ -997,7 +853,7 @@ public class Util
 		{
 
 
-			if (onestore.pictureid == pictureid)
+			if (onestore.pictureId == pictureid)
 			{
 
 				store = onestore;
@@ -1009,14 +865,14 @@ public class Util
 		}
 
 
-		String file = store.File;
+		String file = store.fileName;
 	    URL u = null;
         HttpURLConnection con = null;
         InputStream inputStream = null;
         //尝试发送请求
         try
 		{
-			u = new URL("http://" + Util.http_dns(Util.read_config("upload_img_address")) + "/cgi-bin/httpconn?htcmd=0x6ff0071&ver=5515&term=pc&ukey=" + Util.byte2HexString(keystore.ukey).replace(" ", "") + "&filesize=" + getfilelength(file) + "&range=0&uin=" + user.QQ + "&groupcode=" + store.Group);
+			u = new URL("http://" + Util.http_dns(Util.read_config("upload_img_address")) + "/cgi-bin/httpconn?htcmd=0x6ff0071&ver=5515&term=pc&ukey=" + Util.byte2HexString(keystore.ukey).replace(" ", "") + "&filesize=" + getfilelength(file) + "&range=0&uin=" + user.QQ + "&groupcode=" + store.groupUin);
 			con = (HttpURLConnection) u.openConnection();
             con.setRequestMethod("POST");
             con.setDoOutput(true);
@@ -1155,30 +1011,30 @@ public class Util
 	{
 
 		ByteBuilder builder = new ByteBuilder();
-		builder.writebytes(Util.RandomKey(4));
-		builder.writebytes(Util.str_to_byte("0000000009008600"));
-		builder.writebytes(new byte[]{0x00,0x0c});
-		builder.writebytes(Util.str_to_byte("E5BEAEE8BDAFE99B85E9BB91"));
-		builder.writebytes(new byte[] { 0x00, 0x00, 0x14 });
-		builder.writeint(data.length + 11);
-		builder.writebyte((byte) 0x01);
-		builder.writeint(data.length + 1);
-		builder.writebyte((byte) 0x01);
-		builder.writebytes(data);
-		builder.writebytes(new byte[] { 0x02, 0x00, 0x04, 0x00, 0x00, 0x00, 0x4D });
-		return builder.getdata();
+		builder.writeBytes(Util.RandomKey(4));
+		builder.writeBytes(Util.str_to_byte("0000000009008600"));
+		builder.writeBytes(new byte[]{0x00,0x0c});
+		builder.writeBytes(Util.str_to_byte("E5BEAEE8BDAFE99B85E9BB91"));
+		builder.writeBytes(new byte[] { 0x00, 0x00, 0x14 });
+		builder.writeShort(data.length + 11);
+		builder.writeByte((byte) 0x01);
+		builder.writeShort(data.length + 1);
+		builder.writeByte((byte) 0x01);
+		builder.writeBytes(data);
+		builder.writeBytes(new byte[] { 0x02, 0x00, 0x04, 0x00, 0x00, 0x00, 0x4D });
+		return builder.getDataAndDestroy();
 	}
 
 	public static byte[] constructmessage(QQUser user, byte[] data)
 	{
 		ByteBuilder builder = new ByteBuilder();
-		builder.writebyte((byte)0x01);
-		builder.writeint((data.length + 3));
-		builder.writebyte((byte)0x01);
-		builder.writeint(data.length);
-		builder.writebytes(data);
+		builder.writeByte((byte)0x01);
+		builder.writeShort((data.length + 3));
+		builder.writeByte((byte)0x01);
+		builder.writeShort(data.length);
+		builder.writeBytes(data);
 
-		return builder.getdata();
+		return builder.getDataAndDestroy();
 	}
 	public static long ConvertQQGroupId(long code)
 	{
@@ -1222,8 +1078,6 @@ public class Util
 			right = group.substring(group.length() - 7, group.length());
 
 			gid = String.valueOf(left + 389) + right;
-
-
 		}
 		else if (left >= 310 && left <= 499)
 		{
@@ -1242,132 +1096,75 @@ public class Util
 
 	public static void parseRichText(QQMessage qqmessage, byte[] rich_data)
 	{
-		ByteFactory bytefactory = new ByteFactory(rich_data);
-		int messagetype = bytefactory.readBytes(1)[0];
+		ByteReader reader = new ByteReader(rich_data);
 
-		int messagelength = bytefactory.readint();
-		int position = bytefactory.position;
-
-		while (position + messagelength <= bytefactory.data.length)
-		{
-			bytefactory.readBytes(1);
-
-
-			switch (messagetype)
+		ByteReader reader2 = new ByteReader(new byte[1]);
+		try{
+			while (reader.hasMore())
 			{
-				case 0x01: // 纯文本消息、@
-					{
-						qqmessage.contain_type = 1;
-						String messageStr = bytefactory.readStringbylength();
-						if (messageStr.startsWith("@") && position + messagelength - bytefactory.position == 16)
-						{
-							if (qqmessage.Isat == false)
-							{
-								qqmessage.Isat = true;
+				int messageType = reader.readBytes(1)[0];
+
+				int messageLength = reader.readShort();
+
+				byte[] message = reader.readBytes(messageLength);
+
+				switch (messageType){
+					case 1:{//文本，艾特
+							reader2.update(message);
+							reader2.readBytes(1);
+							int textlength = reader2.readShort();
+							String text = reader2.readString(textlength);
+							if(text.startsWith("@")&&messageLength-textlength==19){
+								reader2.readBytes(10);
+								((GroupMessage)qqmessage).addAt(new AtStore().setAtName(text).setTargetUin(reader2.readInt()));
+							}else{
+								qqmessage.addText(text);
 							}
-							bytefactory.readBytes(10);
-							qqmessage.Atlist.add(messageStr + " Target: " + bytefactory.readlong());
-
+						}break;
+					case 10:{//语音
+							reader2.update(message);
+							reader2.readBytes(1);
+							int textlength = reader2.readShort();
+							String text = reader2.readString(textlength);
+							qqmessage.addVoice(text);
+						}break;
+					case 3:{//图片
+							reader2.update(message);
+							reader2.readBytes(1);
+							int textlength = reader2.readShort();
+							String text = reader2.readString(textlength);
+							qqmessage.addImage(text);
+						}break;
+					case 24:{//文件
+							reader2.update(message);
+							reader2.readBytes(1);
+							int textlength = reader2.readShort();
+							String text = reader2.readString(textlength);
+							qqmessage.addFile(text);
+						}break;
+					case 20:{//xml
+							reader2.update(message);
+							reader2.readBytes(1);
+							reader2.update(reader2.readBytesByShortLength());
+							reader2.readBytes(1);
+							qqmessage.addXml(new String(ZLibUtils.decompress(reader2.readRestBytes())));
+						}break;
+					case 18:{//群名片
+							reader2.update(message);
+							reader2.readBytes(15);
+							((GroupMessage)qqmessage).senderName = reader2.readStringByShortLength();
 						}
-						else
-						{
-							qqmessage.Message += messageStr;
-						}
-
-						break;
-					}
-				case 0x03: // 图片
-					{
-						qqmessage.contain_type = 2;
-						qqmessage.Message += bytefactory.readStringbylength();
-						break;
-					}
-				case 0x0A: // 音频
-					{
-						qqmessage.contain_type = 3;
-						qqmessage.Message += bytefactory.readBytesbylength();
-						break;
-					}
-				case 0x0E: // 未知
-					{
-						break;
-					}
-				case 0x12: // 群名片
-					{
-						ByteFactory cardfactory = new ByteFactory(Util.subByte(rich_data, position, rich_data.length - position));
-						int cardtype = cardfactory.readBytes(1)[0];
-
-						int cardlength = cardfactory.readint();
-						int cardposition = cardfactory.position;
-
-						while (cardposition + cardlength <= cardfactory.data.length)
-						{
-
-
-							if (cardtype == 0x01 || cardtype == 0x02)
-							{
-								qqmessage.SendName = cardfactory.readString(cardlength);
-							}
-
-							if (cardposition + cardlength == cardfactory.data.length)
-							{
-								break;
-							}
-							cardfactory.readBytes((cardposition + cardlength - cardfactory.position));
-
-							cardtype = cardfactory.readBytes(1)[0];
-							cardlength = cardfactory.readint();
-							cardposition = cardfactory.position;
-						}
-
-
-						break;
-					}
-				case 0x14: // xml
-					{
-					    qqmessage.contain_type = 1;
-						ByteFactory xmlfactory = new ByteFactory(Util.subByte(rich_data, position, rich_data.length - position));
-						xmlfactory.readBytes(1);
-						int length = xmlfactory.readint();
-						xmlfactory.readBytes(1);
-						byte[] xml = xmlfactory.readBytes(length);
-						qqmessage.Message = new String(ZLibUtils.decompress(xml));
-
-						break;
-
-					}
-				case 0x18: // 群文件
-					{
-						System.out.println("Fuck");
-						break;
-					}
-				case 0x19: // 红包
-					{
-
-						break;
-
-					}
-				default:
-					{
-						break;
-					}
+				}
 			}
-
-			if (position + messagelength == bytefactory.data.length)
-			{
-				break;
-			}
-			bytefactory.readBytes((position + messagelength - bytefactory.position));
-
-			messagetype = bytefactory.readBytes(1)[0];
-			messagelength = bytefactory.readint();
-			position = bytefactory.position;
-
+		}
+		finally{
+			reader.destroy();
+			reader2.destroy();
 		}
 
 
 	}
-
+	
 
 
 	public static String getHostIP()
@@ -1785,8 +1582,6 @@ public class Util
 
 
 	}
-
-
 
 	public static HostnameVerifier hv = new HostnameVerifier() {
         public boolean verify(String urlHostName, SSLSession session)

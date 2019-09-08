@@ -110,7 +110,6 @@ public class TLV
 	
 		for (int i = 0, start = 0; i < rawTlv.length; start = i)
 		{
-		
 			// parse Tag
 			
 			//i++
@@ -132,8 +131,6 @@ public class TLV
 			System.arraycopy(rawTlv, start, rawData, 0, i - start);
 			TLV tlv = new TLV(tag, length, rawData.length - length, rawData);
 			result.add(tlv);
-
-			
 		}
 	}
 

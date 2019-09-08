@@ -28,8 +28,8 @@ public class TXProtocol
 	
 	public int  WRedirectCount =0;
 	
-	public String DwServerIP  = Util.http_dns(Util.read_config("server_address"));
-	public short WServerPort  = 8000;
+	public String DwServerIP  = "";
+	public short WServerPort  = 0;
 	public List<byte[]>  WRedirectips = new ArrayList<byte[]>();
 	
 	public static byte[] CPingType  ={0x02};

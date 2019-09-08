@@ -3,50 +3,141 @@ import java.util.*;
 
 public class QQMessage
 {
-	public int Message_Type  = 0;
-	public long Sender_Uin = 0;
-	public long Message_Time = 0;
-	public long Message_Id =0;
+	List<MessagePart> messageBody = new ArrayList<MessagePart>();
 
-	public byte[] MessageIndex;
+	public static final int type_text_message = 0;
 
-	public long Reciece_Message_Time;
+	public static final int type_emoji_message = 1;
 
-	public long Send_Message_Time;
+	public static final int type_at_message = 2;
 
-	public String Message_Font;
+	public static final int type_xml_message = 3;
 
-	public String Message = "";
+	public static final int type_json_message = 4;
 
-	public String Message_Text;
+	public static final int type_image_message = 5;
 
-	public boolean Isat;
-	
-	public List<String> Atlist = new ArrayList<String>();
+	public static final int type_voice_message = 6;
 
-	public String SendName;
+	public static final int type_file_message = 7;
 
-	public long Group_uin;
+	public static final int type_red_packet_message = 8;
 
-	public long Self_uin;
+	public static final int type_noney_transfer_message = 9;
 
-	public int contain_type =0;
-	
-	
-	
-	public QQMessage(){
-		
-	}
-
-	public QQMessage setmessage(String text)
+	public QQMessage addMoneyTransfer(String body)
 	{
-		this.Message=text;
+		this.messageBody.add(new MessagePart().setType(type_noney_transfer_message).setBody(body));
+		return this;
+	}
+
+	public QQMessage addRedPacket(String body)
+	{
+		this.messageBody.add(new MessagePart().setType(type_red_packet_message).setBody(body));
+		return this;
+	}
+
+	public QQMessage addText(String body)
+	{
+		this.messageBody.add(new MessagePart().setType(type_text_message).setBody(body));
+		return this;
+	}
+
+	public QQMessage addImage(String body)
+	{
+		this.messageBody.add(new MessagePart().setType(type_image_message).setBody(body));
+		return this;
+	}
+
+	public QQMessage addVoice(String body)
+	{
+		this.messageBody.add(new MessagePart().setType(type_voice_message).setBody(body));
+		return this;
+	}
+
+	public QQMessage addEmoji(int body)
+	{
+		this.messageBody.add(new MessagePart().setType(type_emoji_message).setBody(body));
+		return this;
+	}
+
+	public QQMessage addXml(String body)
+	{
+		this.messageBody.add(new MessagePart().setType(type_xml_message).setBody(body));
+		return this;
+	}
+
+	public QQMessage addJson(String body)
+	{
+		this.messageBody.add(new MessagePart().setType(type_json_message).setBody(body));
+		return this;
+	}
+
+	public QQMessage addFile(String body)
+	{
+		this.messageBody.add(new MessagePart().setType(type_file_message).setBody(body));
 		return this;
 	}
 	
+	public long senderUin = 0;
 	
-	public QQMessage setsendername(String name){
-		this.SendName=name;
-		return this;
+	public long messageId =0;
+
+	public byte[] messageIndex;
+
+	public long time;
+
+	public String font;
+
+	public String message = "";
+
+	
+
+	public long selfUin;
+	
+	
+	@Override public String toString()
+	{
+		StringBuilder sb = new StringBuilder();
+		for (MessagePart mp:this.messageBody)
+		{
+			switch (mp.type)
+			{
+				case type_text_message:{
+						sb.append(mp.body.toString());
+					}break;
+				case type_voice_message:{
+						sb.append("[voice:" + mp.body.toString() + "]");
+					}break;
+				case type_image_message:{
+						sb.append("[image:" + mp.body.toString() + "]");
+					}break;
+				case type_xml_message:{
+						sb.append("[xml:" + mp.body.toString() + "]");
+					}break;
+				case type_json_message:{
+						sb.append("[json:" + mp.body.toString() + "]");
+					}break;
+				case type_emoji_message:{
+						sb.append("[emoji:" + mp.body.toString() + "]");
+					}break;
+				case type_at_message:{
+						sb.append("[at:" + ((AtStore)mp.body).atName + "(" + ((AtStore)mp.body).targetUin +")"+ "]");
+					}break;
+				case type_file_message:{
+						sb.append("[file:" + mp.body.toString() + "]");
+					}break;
+				case type_red_packet_message:{
+						sb.append("[redpacket:" + mp.body.toString() + "]");
+					}break;
+				case type_noney_transfer_message:{
+						sb.append("[moneytransfer:" + mp.body.toString() + "]");
+					}break;
+				default:{
+						System.out.println("未知消息片段类型");
+					}
+			}
+		}
+		return sb.toString();
 	}
 }

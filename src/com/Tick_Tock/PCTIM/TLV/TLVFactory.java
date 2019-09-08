@@ -5,68 +5,66 @@ import com.Tick_Tock.PCTIM.*;
 
 public class TLVFactory
 {
-
-	
 	public static byte[] tlv0018(QQUser user){
 		ByteBuilder builder = new ByteBuilder();
 	    byte[] WSubVer ={0x00,0x01};
-		builder.writebytes(WSubVer); //wSubVer 
-		builder.writebytes(user.TXProtocol.DwSsoVersion); //dwSSOVersion
-		builder.writebytes(user.TXProtocol.DwServiceId); //dwServiceId
-		builder.writebytes(user.TXProtocol.DwClientVer); //dwClientVer
-		builder.writelong(user.QQ);
-		builder.writeint(user.TXProtocol.WRedirectCount); //wRedirectCount 
-		builder.writebytes(new byte[]{00,00});
-		builder.rewriteint(builder.data.length); //长度
-		builder.rewritebytes(new byte[]{0x00,0x18});//头部
+		builder.writeBytes(WSubVer); //wSubVer 
+		builder.writeBytes(user.TXProtocol.DwSsoVersion); //dwSSOVersion
+		builder.writeBytes(user.TXProtocol.DwServiceId); //dwServiceId
+		builder.writeBytes(user.TXProtocol.DwClientVer); //dwClientVer
+		builder.writeInt(user.QQ);
+		builder.writeShort(user.TXProtocol.WRedirectCount); //wRedirectCount 
+		builder.writeBytes(new byte[]{00,00});
+		builder.rewriteShort(builder.totalcount()); //长度
+		builder.rewriteBytes(new byte[]{0x00,0x18});//头部
 		
-		return builder.getdata();
+		return builder.getDataAndDestroy();
 	}
 	
 	public static byte[] tlv0309(QQUser user){
 		ByteBuilder builder = new ByteBuilder();
 	    byte[] WSubVer ={0x00,0x01};
-		builder.writebytes(WSubVer); //wSubVer
-		builder.writebytes(Util.IPStringToByteArray(user.TXProtocol.DwServerIP)); //LastServerIP - 服务器最后的登录IP，可以为0
-		builder.writebytes( Util.subByte(Util.ToByte(user.TXProtocol.WRedirectips.size()),3,1)); //cRedirectCount - 重定向的次数（IP的数量）
+		builder.writeBytes(WSubVer); //wSubVer
+		builder.writeBytes(Util.IPStringToByteArray(user.TXProtocol.DwServerIP)); //LastServerIP - 服务器最后的登录IP，可以为0
+		builder.writeBytes( Util.subByte(Util.ToByte(user.TXProtocol.WRedirectips.size()),3,1)); //cRedirectCount - 重定向的次数（IP的数量）
 		for (byte[] ip : user.TXProtocol.WRedirectips)
 			{
-				builder.writebytes(ip);
+				builder.writeBytes(ip);
 			}
 
-		builder.writebytes(user.TXProtocol.CPingType); //cPingType 
-		builder.rewriteint(builder.data.length); //长度
-		builder.rewritebytes(new byte[]{0x03,0x09});//头部
+		builder.writeBytes(user.TXProtocol.CPingType); //cPingType 
+		builder.rewriteShort(builder.totalcount()); //长度
+		builder.rewriteBytes(new byte[]{0x03,0x09});//头部
 
-		return builder.getdata();
+		return builder.getDataAndDestroy();
 	}
 	
 	public static byte[] tlv0036(int ver){
 		ByteBuilder builder = new ByteBuilder();
 		
 		if (ver ==2){
-			builder.writebytes(new byte[]{0x00,0x02,0x0,0x01,0x00,0x00,0x00,0x05,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00}); //wSubVer
-			builder.rewriteint(builder.data.length); //长度
-			builder.rewritebytes(new byte[]{0x00,0x36});//头部
+			builder.writeBytes(new byte[]{0x00,0x02,0x0,0x01,0x00,0x00,0x00,0x05,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00}); //wSubVer
+			builder.rewriteShort(builder.totalcount()); //长度
+			builder.rewriteBytes(new byte[]{0x00,0x36});//头部
 		}else if  (ver ==1){
-			builder.rewritebytes(new byte[]{0x00,0x01,0x0,0x01,0x0,0x00,0x0,0x00}); //wSubVer
-			builder.rewriteint(builder.data.length); //长度
-			builder.rewritebytes(new byte[]{0x00,0x36});//头部
+			builder.rewriteBytes(new byte[]{0x00,0x01,0x0,0x01,0x0,0x00,0x0,0x00}); //wSubVer
+			builder.rewriteShort(builder.totalcount()); //长度
+			builder.rewriteBytes(new byte[]{0x00,0x36});//头部
 		}
 		
-		return builder.getdata();
+		return builder.getDataAndDestroy();
 	}
 	
 	
 	public static byte[] tlv0114(QQUser user){
 		ByteBuilder builder = new ByteBuilder();
 	    byte[] WSubVer ={0x01,0x02};
-		builder.rewritebytes(WSubVer); //wDHVer
-		builder.writebytesbylength(user.TXProtocol.BufDhPublicKey); //bufDHPublicKey长度
-		builder.rewriteint(builder.data.length); //长度
-		builder.rewritebytes(new byte[]{0x01,0x14});//头部
+		builder.rewriteBytes(WSubVer); //wDHVer
+		builder.writeBytesByShortLength(user.TXProtocol.BufDhPublicKey); //bufDHPublicKey长度
+		builder.rewriteShort(builder.totalcount()); //长度
+		builder.rewriteBytes(new byte[]{0x01,0x14});//头部
 
-		return builder.getdata();
+		return builder.getDataAndDestroy();
 	}
 	
 	
@@ -75,33 +73,32 @@ public class TLVFactory
 	    
 		ByteBuilder builder = new ByteBuilder();
 		
-		builder.writebytes(user.TXProtocol.BufSigClientAddr);
-		builder.rewriteint(builder.data.length); //长度
-		builder.rewritebytes(new byte[]{0x01,0x12});//头部
+		builder.writeBytes(user.TXProtocol.BufSigClientAddr);
+		builder.rewriteShort(builder.totalcount()); //长度
+		builder.rewriteBytes(new byte[]{0x01,0x12});//头部
 
-		return builder.getdata();
+		return builder.getDataAndDestroy();
 	}
 	
 	public static byte[] tlv030f(QQUser user)
 	{
 		ByteBuilder builder = new ByteBuilder();
-		builder.writebytesbylength(user.TXProtocol.BufComputerName.getBytes());
-		builder.rewriteint(builder.data.length); //长度
-		builder.rewritebytes(new byte[]{0x03,0x0f});//头部
+		builder.writeBytesByShortLength(user.TXProtocol.BufComputerName.getBytes());
+		builder.rewriteShort(builder.totalcount()); //长度
+		builder.rewriteBytes(new byte[]{0x03,0x0f});//头部
 
-		return builder.getdata();
+		return builder.getDataAndDestroy();
 	}
 	
 	public static byte[] tlv0005(QQUser user)
 	{
 		ByteBuilder builder = new ByteBuilder();
 		byte[] WSubVer = {0x00,0x02};
-		builder.writebytes(WSubVer);
-		builder.writelong(user.QQ);
-		builder.rewriteint(builder.data.length); //长度
-		builder.rewritebytes(new byte[]{0x00,0x05});//头部
-
-		return builder.getdata();
+		builder.writeBytes(WSubVer);
+		builder.writeInt(user.QQ);
+		builder.rewriteShort(builder.totalcount()); //长度
+		builder.rewriteBytes(new byte[]{0x00,0x05});//头部
+		return builder.getDataAndDestroy();
 	}
 	
 	
@@ -109,36 +106,33 @@ public class TLVFactory
 	{
 		ByteBuilder builder = new ByteBuilder();
 		if (user.TXProtocol.BufTgtgt == null){
-
 			byte[] WSubVer = {0x00,0x02};
-
 			byte[] random_byte = Util.random_byte(4);
-			builder.writebytes(random_byte);
-			builder.writebytes(WSubVer);
-			builder.writelong(user.QQ);
-			builder.writebytes(user.TXProtocol.DwSsoVersion);
-			builder.writebytes(user.TXProtocol.DwServiceId);
-			builder.writebytes(user.TXProtocol.DwClientVer);
-			builder.writebytes(new byte[]{0x00,0x00});
-			builder.writebytes(user.TXProtocol.BRememberPwdLogin);
-			builder.writebytes(user.MD51);    //密码
-			builder.writebytes(user.TXProtocol.DwServerTime_Byte);
-			builder.writebytes(new byte[13]);
-			builder.writebytes(user.TXProtocol.DwClientIP_Byte);
-			builder.writebytes(user.TXProtocol.DwIsp); //dwISP
-			builder.writebytes(user.TXProtocol.DwIdc); //dwIDC
-			builder.writebytesbylength(user.TXProtocol.BufComputerIdEx); //机器码
-			builder.writebytes(user.TXProtocol.BufTgtgtKey); //临时密匙
+			builder.writeBytes(random_byte);
+			builder.writeBytes(WSubVer);
+			builder.writeInt(user.QQ);
+			builder.writeBytes(user.TXProtocol.DwSsoVersion);
+			builder.writeBytes(user.TXProtocol.DwServiceId);
+			builder.writeBytes(user.TXProtocol.DwClientVer);
+			builder.writeBytes(new byte[]{0x00,0x00});
+			builder.writeBytes(user.TXProtocol.BRememberPwdLogin);
+			builder.writeBytes(user.MD51);    //密码
+			builder.writeBytes(user.TXProtocol.DwServerTime_Byte);
+			builder.writeBytes(new byte[13]);
+			builder.writeBytes(user.TXProtocol.DwClientIP_Byte);
+			builder.writeBytes(user.TXProtocol.DwIsp); //dwISP
+			builder.writeBytes(user.TXProtocol.DwIdc); //dwIDC
+			builder.writeBytesByShortLength(user.TXProtocol.BufComputerIdEx); //机器码
+			builder.writeBytes(user.TXProtocol.BufTgtgtKey); //临时密匙
 			Crypter crypter = new Crypter();
-			user.TXProtocol.BufTgtgt = crypter.encrypt(builder.getdata(), user.MD52);
+			user.TXProtocol.BufTgtgt = crypter.encrypt(builder.getDataAndDestroy(), user.MD52);
 		}
 		builder.clean();
-		builder.writebytes(user.TXProtocol.BufTgtgt);
+		builder.writeBytes(user.TXProtocol.BufTgtgt);
 		
-		builder.rewriteint(builder.data.length); //长度
-		builder.rewritebytes(new byte[]{0x00,0x06});//头部
-		
-		return builder.getdata();
+		builder.rewriteShort(builder.totalcount()); //长度
+		builder.rewriteBytes(new byte[]{0x00,0x06});//头部
+		return builder.getDataAndDestroy();
 	}
 
 	
@@ -146,18 +140,18 @@ public class TLVFactory
 	{
 		ByteBuilder builder = new ByteBuilder();
 		byte[] WSubVer = {0x00,0x01};
-		builder.writebytes(WSubVer);
-		builder.writebyte((byte)0x01);
-		builder.writebytes(user.TXProtocol.BufComputerId_crc32_reversed);
-		builder.writebytesbylength(user.TXProtocol.BufComputerId);
-		builder.writebyte((byte)0x02);
-		builder.writebytes(user.TXProtocol.BufComputerIdEx_crc32_reversed);
+		builder.writeBytes(WSubVer);
+		builder.writeByte((byte)0x01);
+		builder.writeBytes(user.TXProtocol.BufComputerId_crc32_reversed);
+		builder.writeBytesByShortLength(user.TXProtocol.BufComputerId);
+		builder.writeByte((byte)0x02);
+		builder.writeBytes(user.TXProtocol.BufComputerIdEx_crc32_reversed);
 		
-		builder.writebytesbylength(user.TXProtocol.BufComputerIdEx);
-		builder.rewriteint(builder.data.length); //长度
-		builder.rewritebytes(new byte[]{0x00,0x15});//头部
+		builder.writeBytesByShortLength(user.TXProtocol.BufComputerIdEx);
+		builder.rewriteShort(builder.totalcount()); //长度
+		builder.rewriteBytes(new byte[]{0x00,0x15});//头部
 
-		return builder.getdata();
+		return builder.getDataAndDestroy();
 	}
 
 
@@ -167,12 +161,12 @@ public class TLVFactory
 		
 		Crypter crypter = new Crypter();
 		
-		builder.writebytes(crypter.encrypt(tlv0015,user.TXProtocol.BufTgtgtKey));
+		builder.writeBytes(crypter.encrypt(tlv0015,user.TXProtocol.BufTgtgtKey));
 		
-		builder.rewriteint(builder.data.length); //长度
-		builder.rewritebytes(new byte[]{0x00,0x1a});//头部
+		builder.rewriteShort(builder.totalcount()); //长度
+		builder.rewriteBytes(new byte[]{0x00,0x1a});//头部
 
-		return builder.getdata();
+		return builder.getDataAndDestroy();
 	}
 
 	
@@ -180,12 +174,12 @@ public class TLVFactory
 	{
 		ByteBuilder builder = new ByteBuilder();
 		byte[] WSubVer = {0x00,0x01};
-		builder.writebytes(WSubVer);
-		builder.writebytesbylength(user.TXProtocol.BufSid);
-		builder.rewriteint(builder.data.length); //长度
-		builder.rewritebytes(new byte[]{0x01,0x03});//头部
+		builder.writeBytes(WSubVer);
+		builder.writeBytesByShortLength(user.TXProtocol.BufSid);
+		builder.rewriteShort(builder.totalcount()); //长度
+		builder.rewriteBytes(new byte[]{0x01,0x03});//头部
 
-		return builder.getdata();
+		return builder.getDataAndDestroy();
 		
 	}
 
@@ -193,61 +187,61 @@ public class TLVFactory
 	{
 		ByteBuilder builder = new ByteBuilder();
 	
-		builder.writebytes(new byte[]{0x01,0x00,0x00,0x00,0x01});
-		builder.rewriteint(builder.data.length); //长度
-		builder.rewritebytes(new byte[]{0x03,0x12});//头部
+		builder.writeBytes(new byte[]{0x01,0x00,0x00,0x00,0x01});
+		builder.rewriteShort(builder.totalcount()); //长度
+		builder.rewriteBytes(new byte[]{0x03,0x12});//头部
 
-		return builder.getdata();
+		return builder.getDataAndDestroy();
 	}
 
 	public static byte[] tlv0508()
 	{
 		ByteBuilder builder = new ByteBuilder();
 
-		builder.writebytes(new byte[]{0x01,0x00,0x00,0x00,0x00});
-		builder.rewriteint(builder.data.length); //长度
-		builder.rewritebytes(new byte[]{0x05,0x08});//头部
+		builder.writeBytes(new byte[]{0x01,0x00,0x00,0x00,0x00});
+		builder.rewriteShort(builder.totalcount()); //长度
+		builder.rewriteBytes(new byte[]{0x05,0x08});//头部
 
-		return builder.getdata();
+		return builder.getDataAndDestroy();
 	}
 	
 	public static byte[] tlv0313(QQUser user)
 	{
 		ByteBuilder builder = new ByteBuilder();
 
-		builder.writebytes(new byte[]{0x01,0x01,0x02});
+		builder.writeBytes(new byte[]{0x01,0x01,0x02});
 		
-		builder.writebytesbylength(user.TXProtocol.BufMacGuid);
-		builder.writebytes(new byte[]{0x00,0x00,0x00,0x02});
-		builder.rewriteint(builder.data.length); //长度
-		builder.rewritebytes(new byte[]{0x03,0x13});//头部
+		builder.writeBytesByShortLength(user.TXProtocol.BufMacGuid);
+		builder.writeBytes(new byte[]{0x00,0x00,0x00,0x02});
+		builder.rewriteShort(builder.totalcount()); //长度
+		builder.rewriteBytes(new byte[]{0x03,0x13});//头部
 
-		return builder.getdata();
+		return builder.getDataAndDestroy();
 	}
 	
 	public static byte[] tlv0102(QQUser user)
 	{
 		ByteBuilder builder = new ByteBuilder();
 		byte[] WSubVer = {0x00,0x01};
-		builder.writebytes(WSubVer);
+		builder.writeBytes(WSubVer);
 		
-		builder.writebytes(Util.str_to_byte("9e9b03236d7fa881a81072ec5097968e"));
+		builder.writeBytes(Util.str_to_byte("9e9b03236d7fa881a81072ec5097968e"));
 		byte[] pic_byte = null;
 		if (user.TXProtocol.BufSigPic == null){
 		    pic_byte = Util.RandomKey(56);
 		}else{
 			pic_byte = user.TXProtocol.BufSigPic;
 		}
-		builder.writebytesbylength(pic_byte);
+		builder.writeBytesByShortLength(pic_byte);
 		byte[] crckey = Util.RandomKey(16);
 		byte[] crccode = Util.get_crc32(crckey);
 		
-		builder.writebytesbylength(Util.byteMerger(crckey,crccode));
+		builder.writeBytesByShortLength(Util.byteMerger(crckey,crccode));
 		
-		builder.rewriteint(builder.data.length); //长度
-		builder.rewritebytes(new byte[]{0x01,0x02});//头部
+		builder.rewriteShort(builder.totalcount()); //长度
+		builder.rewriteBytes(new byte[]{0x01,0x02});//头部
 
-		return builder.getdata();
+		return builder.getDataAndDestroy();
 	}
 
 	public static byte[] tlv0110(QQUser user)
@@ -259,11 +253,11 @@ public class TLVFactory
 			return new byte[] { };
 		}else{
 			
-			builder.writebytes(WSubVer); //wSubVer
-			builder.writebytesbylength(user.TXProtocol.BufSigPic);
-			builder.rewriteint(builder.data.length); //长度
-			builder.rewritebytes(new byte[]{0x01,0x10});//头部
-			return builder.getdata();
+			builder.writeBytes(WSubVer); //wSubVer
+			builder.writeBytesByShortLength(user.TXProtocol.BufSigPic);
+			builder.rewriteShort(builder.totalcount()); //长度
+			builder.rewriteBytes(new byte[]{0x01,0x10});//头部
+			return builder.getDataAndDestroy();
 		}
 		
 	}
@@ -271,55 +265,55 @@ public class TLVFactory
 	public static byte[] tlv0032(QQUser user)
 	{
 		ByteBuilder builder = new ByteBuilder();
-		builder.writebytes(Util.GetQdData(user));
-		builder.rewriteint(builder.data.length); //长度
-		builder.rewritebytes(new byte[]{0x00,0x32});//头部
+		builder.writeBytes(Util.GetQdData(user));
+		builder.rewriteShort(builder.totalcount()); //长度
+		builder.rewriteBytes(new byte[]{0x00,0x32});//头部
 
-		return builder.getdata();
+		return builder.getDataAndDestroy();
 	}
 	
 	public static byte[] tlv0007(QQUser user)
 	{
 		ByteBuilder builder = new ByteBuilder();
-		builder.writebytes(user.TXProtocol.BufTgt);
-		builder.rewriteint(builder.data.length); //长度
-		builder.rewritebytes(new byte[]{0x00,0x07});//头部
+		builder.writeBytes(user.TXProtocol.BufTgt);
+		builder.rewriteShort(builder.totalcount()); //长度
+		builder.rewriteBytes(new byte[]{0x00,0x07});//头部
 
-		return builder.getdata();
+		return builder.getDataAndDestroy();
 	}
 
 	public static byte[] tlv000c(QQUser user)
 	{
 		ByteBuilder builder = new ByteBuilder();
 		byte[] WSubVer = {0x00,0x02};
-		builder.writebytes(WSubVer);
-		builder.writebytes(new byte[]{0x00,0x00});
-		builder.writebytes(user.TXProtocol.DwIdc);
-		builder.writebytes(user.TXProtocol.DwIsp);
+		builder.writeBytes(WSubVer);
+		builder.writeBytes(new byte[]{0x00,0x00});
+		builder.writeBytes(user.TXProtocol.DwIdc);
+		builder.writeBytes(user.TXProtocol.DwIsp);
 		if (user.TXProtocol.DwServerIP == null){
-		    builder.writebytes(Util.IPStringToByteArray(user.TXProtocol.DwServerIP));
+		    builder.writeBytes(Util.IPStringToByteArray(user.TXProtocol.DwServerIP));
 		}else{
-			builder.writebytes(Util.IPStringToByteArray(user.TXProtocol.DwRedirectIP));
+			builder.writeBytes(Util.IPStringToByteArray(user.TXProtocol.DwRedirectIP));
 			
 		}
-		builder.writeshort(user.TXProtocol.WServerPort);
-		builder.writebytes(new byte[]{0x00,0x00});
-		builder.rewriteint(builder.data.length); //长度
-		builder.rewritebytes(new byte[]{0x00,0x0c});//头部
+		builder.writeInt(user.TXProtocol.WServerPort);
+		builder.writeBytes(new byte[]{0x00,0x00});
+		builder.rewriteShort(builder.totalcount()); //长度
+		builder.rewriteBytes(new byte[]{0x00,0x0c});//头部
 
-		return builder.getdata();
+		return builder.getDataAndDestroy();
 	}
 
 	public static byte[] tlv001f(QQUser user)
 	{
 		ByteBuilder builder = new ByteBuilder();
 		byte[] WSubVer = {0x00,0x01};
-		builder.writebytes(WSubVer);
-		builder.writebytes(user.TXProtocol.BufDeviceId);
-		builder.rewriteint(builder.data.length); //长度
-		builder.rewritebytes(new byte[]{0x00,0x1f});//头部
+		builder.writeBytes(WSubVer);
+		builder.writeBytes(user.TXProtocol.BufDeviceId);
+		builder.rewriteShort(builder.totalcount()); //长度
+		builder.rewriteBytes(new byte[]{0x00,0x1f});//头部
 
-		return builder.getdata();
+		return builder.getDataAndDestroy();
 	}
 	
 	public static byte[] tlv0105(QQUser user)
@@ -327,16 +321,16 @@ public class TLVFactory
 		ByteBuilder builder = new ByteBuilder();
 		
 		byte[] WSubVer = {0x00,0x01};
-		builder.writebytes(WSubVer);
-		builder.writebytes(user.TXProtocol.XxooB);
-		builder.writebytes(new byte[]{0x02,0x00,0x14,0x01,0x01,0x00,0x10});
-		builder.writebytes(Util.RandomKey());
-		builder.writebytes(new byte[]{0x00,0x14,0x01,0x02,0x00,0x10});
-		builder.writebytes(Util.RandomKey());
-		builder.rewriteint(builder.data.length); //长度
-		builder.rewritebytes(new byte[]{0x01,0x05});//头部
+		builder.writeBytes(WSubVer);
+		builder.writeBytes(user.TXProtocol.XxooB);
+		builder.writeBytes(new byte[]{0x02,0x00,0x14,0x01,0x01,0x00,0x10});
+		builder.writeBytes(Util.RandomKey());
+		builder.writeBytes(new byte[]{0x00,0x14,0x01,0x02,0x00,0x10});
+		builder.writeBytes(Util.RandomKey());
+		builder.rewriteShort(builder.totalcount()); //长度
+		builder.rewriteBytes(new byte[]{0x01,0x05});//头部
 
-		return builder.getdata();
+		return builder.getDataAndDestroy();
 	}
 
 	public static byte[] tlv010b(QQUser user)
@@ -344,37 +338,35 @@ public class TLVFactory
 		ByteBuilder builder = new ByteBuilder();
 
 		byte[] WSubVer = {0x00,0x02};
-		builder.writebytes(WSubVer);
+		builder.writeBytes(WSubVer);
 		byte[] newbyte = user.TXProtocol.BufTgt;
 		byte flag = EncodeLoginFlag(newbyte, QQGlobal.QqexeMD5);
-		builder.writebytes(user.MD51);
-		builder.writebyte(flag);
-		builder.writebyte((byte)0x10);
-		builder.writebytes(new byte[]{0x00,0x00,0x00,0x00});
-		builder.writebytes(new byte[]{0x00,0x00,0x00,0x02});
+		builder.writeBytes(user.MD51);
+		builder.writeByte(flag);
+		builder.writeByte((byte)0x10);
+		builder.writeBytes(new byte[]{0x00,0x00,0x00,0x00});
+		builder.writeBytes(new byte[]{0x00,0x00,0x00,0x02});
 		byte[] qddata = Util.GetQdData(user);
-		builder.writebytesbylength(qddata);
-		builder.writebytes(new byte[]{0x00,0x00,0x00,0x00});
-		builder.rewriteint(builder.data.length); //长度
-		builder.rewritebytes(new byte[]{0x01,0x0b});//头部
+		builder.writeBytesByShortLength(qddata);
+		builder.writeBytes(new byte[]{0x00,0x00,0x00,0x00});
+		builder.rewriteShort(builder.totalcount()); //长度
+		builder.rewriteBytes(new byte[]{0x01,0x0b});//头部
 
-		return builder.getdata();
+		return builder.getDataAndDestroy();
 	}
 
 	public static byte[] tlv002d(QQUser user)
 	{
 		ByteBuilder builder = new ByteBuilder();
 		byte[] WSubVer = {0x00,0x01};
-		builder.writebytes(WSubVer);
-		builder.writebytes(Util.IPStringToByteArray(Util.getHostIP()));
-		builder.rewriteint(builder.data.length); //长度
-		builder.rewritebytes(new byte[]{0x00,0x2d});//头部
+		builder.writeBytes(WSubVer);
+		builder.writeBytes(Util.IPStringToByteArray(Util.getHostIP()));
+		builder.rewriteShort(builder.totalcount()); //长度
+		builder.rewriteBytes(new byte[]{0x00,0x2d});//头部
 
-		return builder.getdata();
+		return builder.getDataAndDestroy();
 	}
 
-	
-	
 	
 	private static byte EncodeLoginFlag(byte[] bufTgt /*bufTGT*/, byte[] qqexeMD5 /*QQEXE_MD5*/)
 	{

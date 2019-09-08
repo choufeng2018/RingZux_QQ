@@ -1,12 +1,24 @@
+9.8号更新内容:
+1:makefile自动编译运行<br>
+2:将udp换成tcp通道<br>
+3:用netty重构整个框架<br>
+4:用ByteBuf重构大部分Byte构建(还有部分改不动了)<br>
+5:用ByteBuf重构大部分Byte读取(还有部分改不动了)<br>
+6:删除所有有关TUI的东西(那个TUIOO就是写来玩玩的，不想再写了)<br>
+7:删除大量无用代码<br>
+8:替换部分低效率方法<br>
+重构后的结构基本上与我那套安卓OOxy类似。
+
+
 加我叩:1959903082<br>
 学生勿扰，你买不起。<br>
 傻逼勿扰，我的时间不值得你去浪费...<br>
 安卓叩叩协议文档:
 https://saint-theana.github.io/Androidqq_Protocol_Doc/<br>
-部分功能演示:https://b23.tv/av65388267<br>
-部分功能演示2:https://b23.tv/av66492743<br>
-功能列表:https://docs.qq.com/blankpage/DWVpocHRHa0xITXdS?disableReturnList=1&_from=1&preview_token=&coord=A1A0A0&tab=BB08J2<br>
-功能列表:(可收发红包)
+安卓oo部分功能演示:https://b23.tv/av65388267<br>
+安卓oo部分功能演示2:https://b23.tv/av66492743<br>
+安卓oo功能列表:https://docs.qq.com/blankpage/DWVpocHRHa0xITXdS?disableReturnList=1&_from=1&preview_token=&coord=A1A0A0&tab=BB08J2<br>
+安卓oo功能列表:(可收发红包)
 * 监听消息
     * 监听方向
         * - [x] 讨论组
