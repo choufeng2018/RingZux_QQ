@@ -9,22 +9,8 @@ import java.util.zip.DeflaterOutputStream;
 import java.util.zip.Inflater;  
 import java.util.zip.InflaterInputStream;  
 
-/** 
- * ZLib压缩工具 
- *  
- * @author <a href="mailto:zlex.dongliang@gmail.com">梁栋</a> 
- * @version 1.0 
- * @since 1.0 
- */  
 public class ZLibUtils {  
 
-    /** 
-     * 压缩 
-     *  
-     * @param data 
-     *            待压缩数据 
-     * @return byte[] 压缩后的数据 
-     */  
     public static byte[] compress(byte[] data) {  
         byte[] output = new byte[0];  
 
@@ -55,15 +41,6 @@ public class ZLibUtils {
         return output;  
     }  
 
-    /** 
-     * 压缩 
-     *  
-     * @param data 
-     *            待压缩数据 
-     *  
-     * @param os 
-     *            输出流 
-     */  
     public static void compress(byte[] data, OutputStream os) {  
         DeflaterOutputStream dos = new DeflaterOutputStream(os);  
 
@@ -78,13 +55,6 @@ public class ZLibUtils {
         }  
     }  
 
-    /** 
-     * 解压缩 
-     *  
-     * @param data 
-     *            待压缩的数据 
-     * @return byte[] 解压缩后的数据 
-     */  
     public static byte[] decompress(byte[] data) {  
         byte[] output = new byte[0];  
 
@@ -115,13 +85,6 @@ public class ZLibUtils {
         return output;  
     }  
 
-    /** 
-     * 解压缩 
-     *  
-     * @param is 
-     *            输入流 
-     * @return byte[] 解压缩后的数据 
-     */  
     public static byte[] decompress(InputStream is) {  
         InflaterInputStream iis = new InflaterInputStream(is);  
         ByteArrayOutputStream o = new ByteArrayOutputStream(1024);  

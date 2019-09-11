@@ -72,7 +72,7 @@ public class RingzuxHandler extends ChannelInboundHandlerAdapter
 		user.txprotocol.serverAddres = ((InetSocketAddress)ctx.channel().remoteAddress()).getHostString();
 		user.txprotocol.serverPort = (short) ((InetSocketAddress)ctx.channel().remoteAddress()).getPort();
 		//System.out.println(user.TXProtocol.DwServerIP);
-		
+
 		byte[] data = SendPackage.get0825(user);
 		this.send(data);
 	}
@@ -121,12 +121,12 @@ public class RingzuxHandler extends ChannelInboundHandlerAdapter
 						byte[] body_decrypted = crypter.decrypt(body_encrypted, user.packet0825Key);
 						reader.update(body_decrypted);
 						byte header = reader.readBytes(1)[0];
-						this.parse_tlv(reader.readRestBytes(), user);
+						this.parseTlv(reader.readRestBytes(), user);
 						if (header == -2)
 						{
 							System.out.println("重定向到:" + this.user.txprotocol.redirectedAddress);
 							this.user.txprotocol.redirectionCount += 1;
-							this.user.txprotocol.pingType =0x01;
+							this.user.txprotocol.pingType = 0x01;
 							this.user.isLoginRedirected = true;
 							this.ctx.close();
 							RingzuxClient client = new RingzuxClient(443, this.user.txprotocol.redirectedAddress, user);
@@ -156,7 +156,7 @@ public class RingzuxHandler extends ChannelInboundHandlerAdapter
 						{
 							byte[] h = reader.readRestBytes();
 							//System.out.println(Util.byte2HexString(h));
-							this.parse_tlv(h, user);
+							this.parseTlv(h, user);
 						}
 						else
 						{
@@ -164,7 +164,7 @@ public class RingzuxHandler extends ChannelInboundHandlerAdapter
 							body_decrypted = crypter.decrypt(body_decrypted, user.txprotocol.tgtgtKey);
 							reader.update(body_decrypted);
 							header = reader.readBytes(1)[0];
-							this.parse_tlv(reader.readRestBytes(), user);
+							this.parseTlv(reader.readRestBytes(), user);
 						}
 						if (header == 52)
 						{
@@ -195,7 +195,7 @@ public class RingzuxHandler extends ChannelInboundHandlerAdapter
 						byte[] body_decrypted = crypter.decrypt(body_encrypted, user.txprotocol.tgtGtKey);
 						reader.update(body_decrypted);
 						reader.readBytes(1);
-						this.parse_tlv(reader.readRestBytes(), user);		
+						this.parseTlv(reader.readRestBytes(), user);		
 						byte[] data = SendPackage.get00ec(this.user, user.txprotocol.Online);
 						this.send(data);
 						this.startHeatBeat();
@@ -225,13 +225,13 @@ public class RingzuxHandler extends ChannelInboundHandlerAdapter
 							byte[] data_to_send = SendPackage.get0017(this.user, Message_To_Respone, Sequence);
 							this.send(data_to_send);
 							GroupMessage qqmessage = new GroupMessage();
-							long Target_uin = reader.readInt();
-							qqmessage.selfUin = reader.readInt();
+							long Target_uin = reader.readUnsignedInt();
+							qqmessage.selfUin = reader.readUnsignedInt();
 							reader.readBytes(10);
 							int type = reader.readShort();
 							reader.readBytes(2);
 							reader.readBytesByShortLength();
-							qqmessage.groupUin = reader.readInt();
+							qqmessage.groupUin = reader.readUnsignedInt();
 							byte[] flag = reader.readBytes(1);
 
 							message_datafactory = new ByteReader(reader.readRestBytes());
@@ -242,13 +242,13 @@ public class RingzuxHandler extends ChannelInboundHandlerAdapter
 									{
 										if (flag[0] == 0x01)
 										{
-											qqmessage.senderUin = message_datafactory.readInt();
+											qqmessage.senderUin = message_datafactory.readUnsignedInt();
 											//发消息人的QQ
 											qqmessage.messageIndex = message_datafactory.readBytes(4); //姑且叫消息索引吧
-											message_datafactory.readInt(); //接收时间  
+											message_datafactory.readUnsignedInt(); //接收时间  
 											message_datafactory.readBytes(24);
-											qqmessage.time = message_datafactory.readInt() * 1000; //发送时间 
-											qqmessage.messageId = message_datafactory.readInt(); //id
+											qqmessage.time = message_datafactory.readUnsignedInt() * 1000; //发送时间 
+											qqmessage.messageId = message_datafactory.readUnsignedInt(); //id
 											message_datafactory.readBytes(8);
 											qqmessage.font = message_datafactory.readStringByShortLength();//字体
 											message_datafactory.readBytes(2);
@@ -256,7 +256,7 @@ public class RingzuxHandler extends ChannelInboundHandlerAdapter
 											parseRichText(qqmessage, rich_data);
 											if (qqmessage.senderUin != 0 && qqmessage.senderUin != user.uin)
 											{
-												System.out.println("[群消息] 接收: 群号: " + ((GroupMessage)qqmessage).groupUin + " 发送者: " + ((GroupMessage)qqmessage).senderName + " 内容: " + qqmessage.toString());
+												System.out.println("[群消息] 接收: 群号: " + (qqmessage).groupUin + " 发送者: " + (qqmessage).senderName + " 内容: " + qqmessage.toString());
 												this.robot.call(qqmessage);
 											}
 										}
@@ -266,7 +266,7 @@ public class RingzuxHandler extends ChannelInboundHandlerAdapter
 								case 0x22:
 									{
 										message_datafactory.readBytes(5);
-										qqmessage.senderUin = message_datafactory.readInt(); // 邀请人/踢人QQ
+										qqmessage.senderUin = message_datafactory.readUnsignedInt(); // 邀请人/踢人QQ
 										break;
 									}
 								case 0x2C:
@@ -280,15 +280,15 @@ public class RingzuxHandler extends ChannelInboundHandlerAdapter
 										break;
 									}
 							}
-
 						}
 						catch (Exception e)
 						{
-							
+							//不打印
 						}
 						finally
 						{
-							if(message_datafactory!=null){
+							if (message_datafactory != null)
+							{
 								message_datafactory.destroy();
 							}
 						}
@@ -400,14 +400,14 @@ public class RingzuxHandler extends ChannelInboundHandlerAdapter
 						this.send(data_to_send);
 					}break;
 				case "00CE":{
-					FriendMessage qqmessage = new FriendMessage();
+						FriendMessage qqmessage = new FriendMessage();
 						byte[] body_decrypted = crypter.decrypt(body_encrypted, this.user.txprotocol.sessionKey);
 						reader.update(body_decrypted);
 						byte[] Message_To_Respone = reader.readBytes(16);
 						reader.readerIndex(0);
-						qqmessage.senderUin = reader.readInt();
+						qqmessage.senderUin = reader.readUnsignedInt();
 						long Friend_Message_QQ = qqmessage.senderUin;
-						qqmessage.selfUin = reader.readInt();//自己的QQ
+						qqmessage.selfUin = reader.readUnsignedInt();//自己的QQ
 						reader.readBytes(10);
 						reader.readBytes(2);
 						reader.readShort();
@@ -416,14 +416,14 @@ public class RingzuxHandler extends ChannelInboundHandlerAdapter
 						reader.readBytes(4); //FromQQ
 						reader.readBytes(4); //自己的QQ
 						reader.readBytes(20);
-						qqmessage.time = reader.readInt()*1000;
+						qqmessage.time = reader.readUnsignedInt() * 1000;
 						reader.readShort(); //00
 						byte[] Friend_Message_TIME =  reader.readBytes(4); //MessageDateTime
 						reader.readBytes(5); //00
 						reader.readBytes(3);
 						reader.readBytes(5); //00
 						reader.readBytes(4); //MessageDateTime
-						qqmessage.messageId = reader.readInt(); //id
+						qqmessage.messageId = reader.readUnsignedInt(); //id
 						reader.readBytes(8);
 						qqmessage.font = reader.readStringByShortLength();
 						reader.readBytes(1);
@@ -432,13 +432,13 @@ public class RingzuxHandler extends ChannelInboundHandlerAdapter
 						this.send(data_to_send);
 						data_to_send = SendPackage.get0319(this.user, Friend_Message_QQ, Friend_Message_TIME);
 						this.send(data_to_send);
-						parseRichText(qqmessage,reader.readRestBytes());
+						parseRichText(qqmessage, reader.readRestBytes());
 						if (qqmessage.senderUin != 0 && qqmessage.senderUin != user.uin)
 						{
 							System.out.println("[好友消息] 接收: 发送者: " + qqmessage.senderUin  + " 内容: " + qqmessage.toString());
 							this.robot.call(qqmessage);
 						}
-				}
+					}
 			}
 		}
 		catch (Exception e)
@@ -460,87 +460,129 @@ public class RingzuxHandler extends ChannelInboundHandlerAdapter
 				}
 			}, 0, 100, TimeUnit.SECONDS);
 	}
-	
-	public static void parseRichText(QQMessage qqmessage, byte[] rich_data)
-	{
-		ByteReader reader = new ByteReader(rich_data);
 
-		ByteReader reader2 = new ByteReader(new byte[1]);
+	public void parseRichText(QQMessage qqmessage, byte[] data)
+	{
+		//System.out.println(Util.byte2HexString(data));
+
+		List <Tlv> tlvs = parseFakeTlv(data);
+
+		ByteReader reader = new ByteReader(new byte[1]);
 		try
 		{
-			while (reader.hasMore())
+			for (Tlv tlv:tlvs)
 			{
-				int messageType = reader.readBytes(1)[0];
-
-				int messageLength = reader.readShort();
-
-				byte[] message = reader.readBytes(messageLength);
-
-				switch (messageType)
+				//System.out.println(tlv.tag);
+				switch (tlv.tag)
 				{
 					case 1:{//文本，艾特
-							reader2.update(message);
-							reader2.readBytes(1);
-							int textlength = reader2.readShort();
-							String text = reader2.readString(textlength);
-							if (text.startsWith("@") && messageLength - textlength == 19)
+							reader.update(tlv.value);
+							reader.readBytes(1);
+							int textlength = reader.readShort();
+							String text = reader.readString(textlength);
+							if (text.startsWith("@") && tlv.value.length - textlength == 19)
 							{
-								reader2.readBytes(10);
-								((GroupMessage)qqmessage).addAt(new AtStore().setAtName(text).setTargetUin(reader2.readInt()));
+								reader.readBytes(10);
+								((GroupMessage)qqmessage).addAt(new AtStore().setAtName(text).setTargetUin(reader.readUnsignedInt()));
 							}
 							else
 							{
 								qqmessage.addText(text);
 							}
 						}break;
+					case 2:{//表情
+							List <Tlv> emojiTlvs = parseFakeTlv(tlv.value);
+							for (Tlv emojiTlv:emojiTlvs)
+							{
+								switch (emojiTlv.tag)
+								{
+									case 1:{
+										reader.update(emojiTlv.value);
+											qqmessage.addEmoji(reader.readUnsignedByte());
+										}
+								}
+							}
+				    }break;
 					case 10:{//语音
-							reader2.update(message);
-							reader2.readBytes(1);
-							int textlength = reader2.readShort();
-							String text = reader2.readString(textlength);
+							reader.update(tlv.value);
+							reader.readBytes(1);
+							int textlength = reader.readShort();
+							String text = reader.readString(textlength);
 							qqmessage.addVoice(text);
 						}break;
 					case 3:{//图片
-							reader2.update(message);
-							reader2.readBytes(1);
-							int textlength = reader2.readShort();
-							String text = reader2.readString(textlength);
+							reader.update(tlv.value);
+							reader.readBytes(1);
+							int textlength = reader.readShort();
+							String text = reader.readString(textlength);
 							qqmessage.addImage(text);
 						}break;
 					case 24:{//文件
-							reader2.update(message);
-							reader2.readBytes(1);
-							int textlength = reader2.readShort();
-							String text = reader2.readString(textlength);
+							reader.update(tlv.value);
+							reader.readBytes(1);
+							int textlength = reader.readShort();
+							String text = reader.readString(textlength);
 							qqmessage.addFile(text);
 						}break;
 					case 20:{//xml
-							reader2.update(message);
-							reader2.readBytes(1);
-							reader2.update(reader2.readBytesByShortLength());
-							reader2.readBytes(1);
-							qqmessage.addXml(new String(ZLibUtils.decompress(reader2.readRestBytes())));
+							reader.update(tlv.value);
+							reader.readBytes(1);
+							reader.update(reader.readBytesByShortLength());
+							reader.readBytes(1);
+							qqmessage.addXml(new String(ZLibUtils.decompress(reader.readRestBytes())));
 						}break;
 					case 18:{//群名片
-							reader2.update(message);
-							reader2.readBytes(15);
-							((GroupMessage)qqmessage).senderName = reader2.readStringByShortLength();
-						}
+							List <Tlv> cardTlvs = parseFakeTlv(tlv.value);
+							for (Tlv cardTlv:cardTlvs)
+							{
+								switch (cardTlv.tag)
+								{
+									case 1:
+									case 2:{
+											((GroupMessage)qqmessage).senderName = new String(cardTlv.value);
+										}
+								}
+							}
+						}break;
+					case 25:{//红包，不做解析
+						
+					}break;
+					case 14:{//不知道
+						
+					}break;
+					default:{
+							System.out.println("未知消息片段: "+tlv.tag);
+							System.out.println(Util.byte2HexString(tlv.value));
+						}break;
 				}
 			}
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
 		}
 		finally
 		{
 			reader.destroy();
-			reader2.destroy();
 		}
-
-
 	}
 
-	
+	private List<Tlv> parseFakeTlv(byte[] data)
+	{
+		List<Tlv> tlvs = new ArrayList<Tlv>();
+		ByteReader reader = new ByteReader(data);
+		while (reader.hasMore())
+		{
+			Tlv tlv = new Tlv();
+			tlv.tag = reader.readBytes(1)[0];
+			tlv.value = reader.readBytesByShortLength();
+			tlvs.add(tlv);
+		}
+		reader.destroy();
+		return tlvs;
+	}
 
-	private void parse_tlv(byte[] data, QQUser user)
+	private void parseTlv(byte[] data, QQUser user)
 	{
 		List<Tlv> tlvs = Tlv.parseTlv(data);
 		for (Tlv tlv: tlvs)
@@ -554,12 +596,5 @@ public class RingzuxHandler extends ChannelInboundHandlerAdapter
 		ByteBuf buf = Unpooled.directBuffer();
 		buf.writeBytes(data);
 		ctx.writeAndFlush(buf);
-		//aa.release();
 	}
-	
-	
-	
-	
-
-
 }

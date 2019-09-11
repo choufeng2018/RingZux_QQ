@@ -846,7 +846,7 @@ public class Util
         //尝试发送请求
         try
 		{
-			u = new URL("http://" + Util.http_dns(Util.readConfig("upload_img_address")) + "/cgi-bin/httpconn?htcmd=0x6ff0071&ver=5515&term=pc&ukey=" + Util.byte2HexString(keystore.ukey).replace(" ", "") + "&filesize=" + getfilelength(file) + "&range=0&uin=" + user.uin + "&groupcode=" + store.groupUin);
+			u = new URL("http://" + Util.http_dns(Util.readConfig("UPLOAD_IMAGE_ADDRESS")) + "/cgi-bin/httpconn?htcmd=0x6ff0071&ver=5515&term=pc&ukey=" + Util.byte2HexString(keystore.ukey).replace(" ", "") + "&filesize=" + getfilelength(file) + "&range=0&uin=" + user.uin + "&groupcode=" + store.groupUin);
 			con = (HttpURLConnection) u.openConnection();
             con.setRequestMethod("POST");
             con.setDoOutput(true);

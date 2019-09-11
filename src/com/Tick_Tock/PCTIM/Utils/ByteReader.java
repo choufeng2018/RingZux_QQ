@@ -103,12 +103,35 @@ public class ByteReader
 		return data;
 	}
 
+	public byte readByte()
+	{
+		return this.byteBuffer.readByte();
+	}
+	
+	public short readUnsignedByte()
+	{
+		return this.byteBuffer.readUnsignedByte();
+
+	}
+	
 	public byte[] readBytesAndDestroy(int length)
 	{
 		byte[] data = new byte[length];
 		this.byteBuffer.readBytes(data);
 		this.destroy();
 		return data;
+	}
+	
+	public int readUnsignedShort()
+	{
+		return this.byteBuffer.readUnsignedShort();
+	}
+
+	public int readUnsignedShortAndDestroy()
+	{
+		int y = this.byteBuffer.readUnsignedShort();
+		this.destroy();
+		return y;
 	}
 
 	public int readShort()
@@ -123,6 +146,18 @@ public class ByteReader
 		return y;
 	}
 
+	public long readUnsignedInt()
+	{
+		return this.byteBuffer.readUnsignedInt();
+	}
+
+	public long readUnsignedIntAndDestroy()
+	{
+		long y = this.byteBuffer.readUnsignedInt();
+		this.destroy();
+		return y;
+	}
+	
 	public long readInt()
 	{
 		return this.byteBuffer.readInt();

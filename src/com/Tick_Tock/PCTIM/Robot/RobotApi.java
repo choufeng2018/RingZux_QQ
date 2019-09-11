@@ -11,7 +11,6 @@ public class RobotApi implements API
 	@Override public void sendFriendXml(String text, long friendUin)
 	{
 		SendMessage.sendFriendXmlMessage(this.user, this.socket, text,friendUin);
-		
 	}
 
 	@Override public void sendGroupMessage(String text, long groupUin)
@@ -46,7 +45,6 @@ public class RobotApi implements API
 	
 	@Override public GroupList getGroupList()
 	{
-
 		return this.user.groupList;
 	}
 

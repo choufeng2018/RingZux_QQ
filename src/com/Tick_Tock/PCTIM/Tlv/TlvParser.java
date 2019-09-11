@@ -25,7 +25,7 @@ public class TlvParser
 			if (WSubVer[0] == 1)
             {
 				
-				long timeMillis = bytefactory.readInt();
+				long timeMillis = bytefactory.readUnsignedInt();
                 user.txprotocol.serverTime = (int) timeMillis;
                 user.txprotocol.clientAdrres = Util.getIpStringFromBytes(bytefactory.readBytes(4));
                 user.txprotocol.clientPort = (short) bytefactory.readShortAndDestroy();
