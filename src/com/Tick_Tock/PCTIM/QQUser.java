@@ -1,70 +1,77 @@
 package com.Tick_Tock.PCTIM;
 import com.Tick_Tock.PCTIM.Message.*;
-import com.Tick_Tock.PCTIM.Utils.Util;
+import com.Tick_Tock.PCTIM.Sdk.*;
+import com.Tick_Tock.PCTIM.Utils.*;
 import java.util.*;
-import com.Tick_Tock.PCTIM.sdk.*;
 public class QQUser
 {
+	public long uin;
 	
-	public long QQ;
-	public byte[] MD51;
-	public byte[] MD52;
-	public String NickName;
-	public int Gender;
-	public int Age;
-	public long logintime;
-	public boolean islogined = false;
-	public boolean offline = false;
-
-	public byte[] QQPacket00BaVerifyCode=new byte[0];
-
-	public byte Next;
-
-	public byte[] QQPacket00BaKey = Util.RandomKey();
-
-	public byte QQPacket00BaSequence=0x01;
-
-	public byte[] QQPacket00BaFixKey =Util.str_to_byte("69 20 D1 14 74 F5 B3 93 E4 D5 02 B3 71 1A CD 2A");
-
-	public String userskey;
-
+	public byte[] md51;
+	
+	public byte[] md52;
+	
+	public String nickName;
+	
+	public int sex;
+	
+	public int age;
+	
+	public long loginTime;
+	
+	public boolean isLogined = false;
+	
+	public boolean offLine = false;
+	
+	public byte[] packet00BaVerifyCode=new byte[0];
+	
+	public byte next;
+	
+	public byte[] packet00BaKey = Util.RandomKey();
+	
+	public byte packet00BaSequence=0x01;
+	
+	public byte[] packet00BaFixKey =Util.str_to_byte("69 20 D1 14 74 F5 B3 93 E4 D5 02 B3 71 1A CD 2A");
+	
+	public String skey;
+	
 	public String bkn;
-
+	
 	public String pskey;
-
+	
 	public String qungtk;
-
+	
 	public String quncookie;
+	
+	public GroupList groupList;
+	
+	public FriendList friendList;
+	
+	public Ecdh ecdh;
+	
+	public List<PictureStore> imageStoreCache = new ArrayList<PictureStore>();
+	
+	public TXProtocol txprotocol  = new TXProtocol();
 
-	public Group_List group_list;
+	public byte[] packet0825Key  = Util.RandomKey();
+
+	public boolean isLoginRedirected;
+
+	public byte[] packet0836Key1 = Util.RandomKey();
 	
-	public Friend_List friend_list;
-	
-	public QQUser(long qqNum,byte[] pwd)
+	public QQUser(long qq,byte[] pwd)
 	{
-		
-		QQ = qqNum;
+		Ecdh rrr = new Ecdh();
+		this.txprotocol.ecdhPublicKey= rrr.publickey;
+		this.txprotocol.ecdhShareKey = rrr.sharekey;
+		this.ecdh = rrr;
+		uin = qq;
 		SetPassword(pwd);
 	}
 	
-	
 	public void SetPassword(byte[] pwd)
 	{
-
-		MD51 = pwd;
-		MD52 = Util.MD5(Util.byteMerger(MD51,Util.ToByte(this.QQ)));
+		md51 = pwd;
+		md52 = Util.MD5(new ByteBuilder().writeBytes(md51).writeInt(0).writeInt(this.uin).getDataAndDestroy());
 	}
-	
-	
-	
-	public List<PictureStore> imgs = new ArrayList<PictureStore>();
-	
-	public TXProtocol TXProtocol  = new TXProtocol();
-	
-	public byte[] QQPacket0825Key  = Util.RandomKey();
-	
-	public boolean IsLoginRedirect;
-	
-	public byte[] QQPacket0836Key1 = Util.RandomKey();
-	
 }

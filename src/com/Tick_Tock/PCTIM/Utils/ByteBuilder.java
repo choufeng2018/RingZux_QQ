@@ -10,6 +10,7 @@ public class ByteBuilder
 	}
 	public void clean()
 	{
+		this.byteBuffer.release();
 		this.byteBuffer=Unpooled.directBuffer();
 		this.byteBuffer.writerIndex(0);
 	}

@@ -1,95 +1,82 @@
 package com.Tick_Tock.PCTIM.Package;
 import com.Tick_Tock.PCTIM.Utils.*;
 import com.Tick_Tock.PCTIM.*;
-import com.Tick_Tock.PCTIM.TLV.*;
+import com.Tick_Tock.PCTIM.Tlv.*;
 import java.util.*;
 import java.awt.image.*;
 import com.Tick_Tock.PCTIM.Message.*;
-import com.Tick_Tock.PCTIM.sdk.*;
+import com.Tick_Tock.PCTIM.Sdk.*;
 import java.io.*;
 
 public class SendPackage
 {
 	protected static int _seq = 0x3100; // (char)Util.Random.Next();
-	protected static byte[] body_end = {0x03};
-
+	
+    private static byte[] markEnd = {0x03};
+	
+	public static byte[] markStart = {0x02};
+	
 	public static byte[] get001d(QQUser user)
 	{
-		Util.log("[发送包] 命令: 00 1d");
+		System.out.println("[发送包] 命令: 00 1D");
 		ByteBuilder builder = new ByteBuilder();
-
-
-		builder.writeBytes(QQGlobal.QQHeaderBasicFamily);
-		builder.writeBytes(user.TXProtocol.CMainVer);
-
-		builder.writeBytes(user.TXProtocol.CSubVer);
+		builder.writeBytes(markStart);
+		builder.writeBytes(user.txprotocol.clientVersion1);
+		builder.writeBytes(user.txprotocol.clientVersion2);
 		builder.writeBytes(Util.str_to_byte("00 1d"));
 		builder.writeShort(GetNextSeq());
-
-		builder.writeInt(user.QQ);
-
-		builder.writeBytes(user.TXProtocol.XxooA);
-		builder.writeBytes(user.TXProtocol.DwClientType);
-		builder.writeBytes(user.TXProtocol.DwPubNo);
-		builder.writeBytes(user.TXProtocol.XxooD);
-
+		builder.writeInt(user.uin);
+		builder.writeBytes(user.txprotocol.fix1);
+		builder.writeBytes(user.txprotocol.clientType);
+		builder.writeBytes(user.txprotocol.fuckMe1);
+		builder.writeBytes(user.txprotocol.fix2);
 		ByteBuilder body_builder = new ByteBuilder() ;
-		body_builder.writeBytes(Util.str_to_byte(" 33 00 05 00 08 74 2E 71 71 2E 63 6F 6D 00 0A 71 75 6E 2E 71 71 2E 63 6F 6D 00 0C 71 7A 6F 6E 65 2E 71 71 2E 63 6F 6D 00 0C 6A 75 62 61 6F 2E 71 71 2E 63 6F 6D 00 09 6B 65 2E 71 71 2E 63 6F 6D "));
-		
+		body_builder.writeBytes(Util.str_to_byte("33 00 05 00 08 74 2E 71 71 2E 63 6F 6D 00 0A 71 75 6E 2E 71 71 2E 63 6F 6D 00 0C 71 7A 6F 6E 65 2E 71 71 2E 63 6F 6D 00 0C 6A 75 62 61 6F 2E 71 71 2E 63 6F 6D 00 09 6B 65 2E 71 71 2E 63 6F 6D "));
 		byte[] tlv_data = body_builder.getDataAndDestroy();
-		Crypter crypter = new Crypter();
-		byte[] result = crypter.encrypt(tlv_data,user.TXProtocol.SessionKey);
+		TeaCryptor crypter = new TeaCryptor();
+		byte[] result = crypter.encrypt(tlv_data,user.txprotocol.sessionKey);
 		builder.writeBytes(result);
-		builder.writeBytes(body_end);
+		builder.writeBytes(markEnd);
 		builder.rewriteShort(builder.totalcount()+2);
 		return builder.getDataAndDestroy();
 	}
 	
 	
-	
-	
-	
 	public static byte[] get00ba(QQUser user, String code)
 	{
-		Util.log("[发送包] 命令: 00 ba");
+		System.out.println("[发送包] 命令: 00 BA");
 		ByteBuilder builder = new ByteBuilder();
-
-
-		builder.writeBytes(QQGlobal.QQHeaderBasicFamily);
-		builder.writeBytes(user.TXProtocol.CMainVer);
-
-		builder.writeBytes(user.TXProtocol.CSubVer);
+		builder.writeBytes(markStart);
+		builder.writeBytes(user.txprotocol.clientVersion1);
+		builder.writeBytes(user.txprotocol.clientVersion2);
 		builder.writeBytes(Util.str_to_byte("00 ba"));
 		builder.writeShort(GetNextSeq());
-		
-		builder.writeInt(user.QQ);
-
-		builder.writeBytes(user.TXProtocol.XxooA);
-		builder.writeBytes(user.TXProtocol.DwClientType);
-		builder.writeBytes(user.TXProtocol.DwPubNo);
-		builder.writeBytes(user.TXProtocol.XxooD);
-		builder.writeBytes(user.QQPacket00BaKey);
-
+		builder.writeInt(user.uin);
+		builder.writeBytes(user.txprotocol.fix1);
+		builder.writeBytes(user.txprotocol.clientType);
+		builder.writeBytes(user.txprotocol.fuckMe1);
+		builder.writeBytes(user.txprotocol.fix2);
+		builder.writeBytes(user.packet00BaKey);
 		ByteBuilder body_builder = new ByteBuilder() ;
 		body_builder.writeBytes(Util.str_to_byte("00 02 00 00 08 04 01 E0"));
-		body_builder.writeBytes(user.TXProtocol.DwSsoVersion);
-		body_builder.writeBytes(user.TXProtocol.DwServiceId);
-		body_builder.writeBytes(user.TXProtocol.DwClientVer);
+		body_builder.writeBytes(user.txprotocol.ssoVersion);
+		body_builder.writeBytes(user.txprotocol.serviceId);
+		body_builder.writeBytes(user.txprotocol.fuckMe2);
 		body_builder.writeByte((byte) 0x00);
-		body_builder.writeBytesByShortLength(user.TXProtocol.BufSigClientAddr);
+		body_builder.writeBytesByShortLength(user.txprotocol.sigClientAddress);
 		body_builder.writeBytes(new byte[] {0x01, 0x02});
-		body_builder.writeBytesByShortLength(user.TXProtocol.BufDhPublicKey);
+		body_builder.writeBytesByShortLength(user.txprotocol.ecdhPublicKey);
 		if (code.equals(""))
 		{
 			body_builder.writeBytes(new byte[] {0x13, 0x00, 0x05, 0x00, 0x00, 0x00, 0x00});
-			body_builder.writeByte(user.QQPacket00BaSequence);
-			if (user.TXProtocol.PngToken == null || user.TXProtocol.PngToken.length == 0)
+			body_builder.writeByte(user.packet00BaSequence);
+			if (user.txprotocol.verificationImageToken == null || user.txprotocol.verificationImageToken.length == 0)
 			{
 			     body_builder.writeByte((byte) 0x00);
 			}
 			else
 			{
-				body_builder.writeBytesByShortLength(user.TXProtocol.PngToken);
+				body_builder.writeBytesByShortLength(user.txprotocol.verificationImageToken);
 			}
 		}
 		else
@@ -98,51 +85,51 @@ public class SendPackage
 			body_builder.writeBytes(new byte[] {0x14, 0x00, 0x05, 0x00, 0x00, 0x00, 0x00});
 			body_builder.writeShort(verifyCodeBytes.length);///?????
 		    body_builder.writeBytes(verifyCodeBytes);
-			body_builder.writeBytesByShortLength(user.TXProtocol.BufSigPic);
+			body_builder.writeBytesByShortLength(user.txprotocol.sigImage);
 			//输入验证码后清空图片流
-			user.QQPacket00BaVerifyCode = new byte[] { };
-			user.QQPacket00BaSequence=0x1;
+			user.packet00BaVerifyCode = new byte[] { };
+			user.packet00BaSequence=0x1;
 		}
 
-		body_builder.writeBytesByShortLength(user.QQPacket00BaFixKey);
+		body_builder.writeBytesByShortLength(user.packet00BaFixKey);
 		byte[] tlv_data = body_builder.getDataAndDestroy();
-		Crypter crypter = new Crypter();
-		byte[] result = crypter.encrypt(tlv_data,user.QQPacket00BaKey);
+		TeaCryptor crypter = new TeaCryptor();
+		byte[] result = crypter.encrypt(tlv_data,user.packet00BaKey);
 		builder.writeBytes(result);
-		builder.writeBytes(body_end);
+		builder.writeBytes(markEnd);
 		builder.rewriteShort(builder.totalcount()+2);
-		user.QQPacket00BaSequence+=1;
+		user.packet00BaSequence+=1;
 		return builder.getDataAndDestroy();
 	}
 	
 	public static byte[] get0825(QQUser user){
 		System.out.println("[发送包] 命令: 08 25");
 		ByteBuilder builder = new ByteBuilder();
-		builder.writeBytes(QQGlobal.QQHeaderBasicFamily);
-		builder.writeBytes(user.TXProtocol.CMainVer);
-		builder.writeBytes(user.TXProtocol.CSubVer);
+		builder.writeBytes(markStart);
+		builder.writeBytes(user.txprotocol.clientVersion1);
+		builder.writeBytes(user.txprotocol.clientVersion2);
 		builder.writeBytes(new byte[]{0x08,0x25});
 		builder.writeShort(GetNextSeq());
-		builder.writeInt(user.QQ);
-		builder.writeBytes(user.TXProtocol.XxooA);
-		builder.writeBytes(user.TXProtocol.DwClientType);
-		builder.writeBytes(user.TXProtocol.DwPubNo);
-		builder.writeBytes(user.TXProtocol.XxooD);
-		builder.writeBytes(user.QQPacket0825Key);
+		builder.writeInt(user.uin);
+		builder.writeBytes(user.txprotocol.fix1);
+		builder.writeBytes(user.txprotocol.clientType);
+		builder.writeBytes(user.txprotocol.fuckMe1);
+		builder.writeBytes(user.txprotocol.fix2);
+		builder.writeBytes(user.packet0825Key);
 		ByteBuilder tlv_builder = new ByteBuilder() ;
-		byte[] tlv0018 = TLVFactory.tlv0018(user);
-		byte[] tlv0309 = TLVFactory.tlv0309(user);
-		byte[] tlv0036 = TLVFactory.tlv0036(2);
-		byte[] tlv0114 = TLVFactory.tlv0114(user);
+		byte[] tlv0018 = TlvBuiler.tlv0018(user);
+		byte[] tlv0309 = TlvBuiler.tlv0309(user);
+		byte[] tlv0036 = TlvBuiler.tlv0036(2);
+		byte[] tlv0114 = TlvBuiler.tlv0114(user);
 		tlv_builder.writeBytes(tlv0018);
 		tlv_builder.writeBytes(tlv0309);
 		tlv_builder.writeBytes(tlv0036);
 		tlv_builder.writeBytes(tlv0114);
 		byte[] tlv_data = tlv_builder.getDataAndDestroy();
-		Crypter crypter = new Crypter();
-		byte[] result = crypter.encrypt(tlv_data,user.QQPacket0825Key);
+		TeaCryptor crypter = new TeaCryptor();
+		byte[] result = crypter.encrypt(tlv_data,user.packet0825Key);
 		builder.writeBytes(result);
-		builder.writeBytes(body_end);
+		builder.writeBytes(markEnd);
 		builder.rewriteShort(builder.totalcount()+2);///////*****
 		//System.out.println(Util.byte2HexString(builder.getdata()));
 		return builder.getDataAndDestroy();
@@ -154,72 +141,51 @@ public class SendPackage
 
 		byte[] tlv0110 = null;
 		byte[] tlv0032 = null;
-		builder.writeBytes(QQGlobal.QQHeaderBasicFamily);
-		builder.writeBytes(user.TXProtocol.CMainVer);
+		builder.writeBytes(markStart);
+		builder.writeBytes(user.txprotocol.clientVersion1);
 
-		builder.writeBytes(user.TXProtocol.CSubVer);
+		builder.writeBytes(user.txprotocol.clientVersion2);
 		builder.writeBytes(new byte[]{0x08,0x36});
 		builder.writeShort(GetNextSeq());
-		builder.writeInt(user.QQ);
-		builder.writeBytes(user.TXProtocol.XxooA);
-		builder.writeBytes(user.TXProtocol.DwClientType);
-		builder.writeBytes(user.TXProtocol.DwPubNo);
-		builder.writeBytes(user.TXProtocol.XxooD);
+		builder.writeInt(user.uin);
+		builder.writeBytes(user.txprotocol.fix1);
+		builder.writeBytes(user.txprotocol.clientType);
+		builder.writeBytes(user.txprotocol.fuckMe1);
+		builder.writeBytes(user.txprotocol.fix2);
 
-		builder.writeBytes(user.TXProtocol.SubVer);
-		builder.writeBytes(user.TXProtocol.EcdhVer);
-		builder.writeBytesByShortLength(user.TXProtocol.BufDhPublicKey);
+		builder.writeBytes(user.txprotocol.ecdhProtocolVersion);
+		builder.writeBytes(user.txprotocol.ecdhAlgorithmVersion);
+		builder.writeBytesByShortLength(user.txprotocol.ecdhPublicKey);
 		builder.writeBytes(new byte[] { 0x00, 0x00, 0x00, 0x10 });
-		builder.writeBytes(user.QQPacket0836Key1);
+		builder.writeBytes(user.packet0836Key1);
 
 		ByteBuilder  tlv_builder = new ByteBuilder();
-		byte[] tlv0112 = TLVFactory.tlv0112(user);
-		
-		byte[] tlv030f = TLVFactory.tlv030f(user);
-		byte[] tlv0005 = TLVFactory.tlv0005(user);
-		byte[] tlv0006 = TLVFactory.tlv0006(user);
-		byte[] tlv0015 = TLVFactory.tlv0015(user);
-		byte[] tlv001a = TLVFactory.tlv001a(tlv0015,user);
-		byte[] tlv0018 = TLVFactory.tlv0018(user);
-		byte[] tlv0103 = TLVFactory.tlv0103(user);
-		if(need_verifycode){
-			/*
-			 BodyWriter.Write(new TLV0110().Get_Tlv(User));
-			 BodyWriter.Write(new TLV0032().Get_Tlv(User));
-			 */
-			tlv0110 = TLVFactory.tlv0110(user);
-			tlv0032 = TLVFactory.tlv0032(user);
-		}
-		byte[] tlv0312= TLVFactory.tlv0312();
-		byte[] tlv0508 = TLVFactory.tlv0508();
-		byte[] tlv0313= TLVFactory.tlv0313(user);
-		byte[] tlv0102= TLVFactory.tlv0102(user);
-
-		tlv_builder.writeBytes(tlv0112);
-		tlv_builder.writeBytes(tlv030f);
-		tlv_builder.writeBytes(tlv0005);
-		tlv_builder.writeBytes(tlv0006);
+		tlv_builder.writeBytes(TlvBuiler.tlv0112(user));
+		tlv_builder.writeBytes(TlvBuiler.tlv030f(user));
+		tlv_builder.writeBytes(TlvBuiler.tlv0005(user));
+		tlv_builder.writeBytes(TlvBuiler.tlv0006(user));
+		byte[] tlv0015 = TlvBuiler.tlv0015(user);
 		tlv_builder.writeBytes(tlv0015);
-		tlv_builder.writeBytes(tlv001a);
-		tlv_builder.writeBytes(tlv0018);
-		tlv_builder.writeBytes(tlv0103);
+		tlv_builder.writeBytes(TlvBuiler.tlv001a(tlv0015,user));
+		tlv_builder.writeBytes(TlvBuiler.tlv0018(user));
+		tlv_builder.writeBytes(TlvBuiler.tlv0103(user));
 		if(need_verifycode){
-			tlv_builder.writeBytes(tlv0110);
+			tlv_builder.writeBytes(TlvBuiler.tlv0110(user));
 			//tlv_builder.writebytes(tlv0032);
 		}
-		tlv_builder.writeBytes(tlv0312);
-		tlv_builder.writeBytes(tlv0508);
-		tlv_builder.writeBytes(tlv0313);
-		tlv_builder.writeBytes(tlv0102);
+		tlv_builder.writeBytes(TlvBuiler.tlv0312());
+		tlv_builder.writeBytes(TlvBuiler.tlv0508());
+		tlv_builder.writeBytes(TlvBuiler.tlv0313(user));
+		tlv_builder.writeBytes(TlvBuiler.tlv0102(user));
 
 		//tlv_builder.writebytes(crckey);
 		//tlv_builder.writebytes(crccode);
 		byte[] tlv_data = tlv_builder.getDataAndDestroy();
-		Crypter crypter = new Crypter();
-		byte[] result = crypter.encrypt(tlv_data,user.TXProtocol.BufDhShareKey);
+		TeaCryptor crypter = new TeaCryptor();
+		byte[] result = crypter.encrypt(tlv_data,user.txprotocol.ecdhShareKey);
 		builder.writeBytes(result);
 
-		builder.writeBytes(body_end);
+		builder.writeBytes(markEnd);
 		builder.rewriteShort(builder.totalcount()+2);
 		return builder.getDataAndDestroy();
 	}
@@ -229,29 +195,29 @@ public class SendPackage
 		ByteBuilder builder = new ByteBuilder();
 
 
-		builder.writeBytes(QQGlobal.QQHeaderBasicFamily);
-		builder.writeBytes(user.TXProtocol.CMainVer);
-		builder.writeBytes(user.TXProtocol.CSubVer);
+		builder.writeBytes(markStart);
+		builder.writeBytes(user.txprotocol.clientVersion1);
+		builder.writeBytes(user.txprotocol.clientVersion2);
 		builder.writeBytes( new byte[]{0x08,0x28});
 		builder.writeShort(GetNextSeq());
-		builder.writeInt(user.QQ);
+		builder.writeInt(user.uin);
 		builder.writeBytes(new byte[] { 0x02, 0x00, 0x00});
-		builder.writeBytes(user.TXProtocol.DwClientType);
-		builder.writeBytes(user.TXProtocol.DwPubNo);
+		builder.writeBytes(user.txprotocol.clientType);
+		builder.writeBytes(user.txprotocol.fuckMe1);
 		builder.writeBytes(new byte[] { 0x00, 0x30, 0x00, 0x3a });
-		builder.writeBytesByShortLength(user.TXProtocol.BufSigSession);
+		builder.writeBytesByShortLength(user.txprotocol.sigSession);
 
 		ByteBuilder tlv_builder = new ByteBuilder();
 
-		byte[] tlv0007 = TLVFactory.tlv0007(user);
-		byte[] tlv000c = TLVFactory.tlv000c(user);
-		byte[] tlv0015 = TLVFactory.tlv0015(user);
-		byte[] tlv0036 = TLVFactory.tlv0036(2);
-		byte[] tlv0018 = TLVFactory.tlv0018(user);
-		byte[] tlv001f = TLVFactory.tlv001f(user);
-		byte[] tlv0105 = TLVFactory.tlv0105(user);
-		byte[] tlv010b = TLVFactory.tlv010b(user);
-		byte[] tlv002d = TLVFactory.tlv002d(user);
+		byte[] tlv0007 = TlvBuiler.tlv0007(user);
+		byte[] tlv000c = TlvBuiler.tlv000c(user);
+		byte[] tlv0015 = TlvBuiler.tlv0015(user);
+		byte[] tlv0036 = TlvBuiler.tlv0036(2);
+		byte[] tlv0018 = TlvBuiler.tlv0018(user);
+		byte[] tlv001f = TlvBuiler.tlv001f(user);
+		byte[] tlv0105 = TlvBuiler.tlv0105(user);
+		byte[] tlv010b = TlvBuiler.tlv010b(user);
+		byte[] tlv002d = TlvBuiler.tlv002d(user);
 
 		tlv_builder.writeBytes(tlv0007);
 		tlv_builder.writeBytes(tlv000c);
@@ -264,10 +230,10 @@ public class SendPackage
 		tlv_builder.writeBytes(tlv002d);
 
 		byte[] tlv_data = tlv_builder.getDataAndDestroy();
-		Crypter crypter = new Crypter();
-		byte[] result = crypter.encrypt(tlv_data,user.TXProtocol.BufSessionKey);
+		TeaCryptor crypter = new TeaCryptor();
+		byte[] result = crypter.encrypt(tlv_data,user.txprotocol.sessionKey);
 		builder.writeBytes(result);
-		builder.writeBytes(body_end);
+		builder.writeBytes(markEnd);
 		builder.rewriteShort(builder.totalcount()+2);
 		return builder.getDataAndDestroy();
 	}
@@ -278,19 +244,19 @@ public class SendPackage
 	
 
 	public static byte[] get00ec(QQUser user,byte[] loginStatus){
-		System.out.println("[发送包] 命令: 00 ec");
+		System.out.println("[发送包] 命令: 00 EC");
 		ByteBuilder builder = new ByteBuilder();
 
-		builder.writeBytes(QQGlobal.QQHeaderBasicFamily);
-		builder.writeBytes(user.TXProtocol.CMainVer);
-		builder.writeBytes(user.TXProtocol.CSubVer);
+		builder.writeBytes(markStart);
+		builder.writeBytes(user.txprotocol.clientVersion1);
+		builder.writeBytes(user.txprotocol.clientVersion2);
 		builder.writeBytes( Util.str_to_byte("00 ec"));
 		builder.writeShort(GetNextSeq());
-		builder.writeInt(user.QQ);
-		builder.writeBytes(user.TXProtocol.XxooA);
-		builder.writeBytes(user.TXProtocol.DwClientType);
-		builder.writeBytes(user.TXProtocol.DwPubNo);
-		builder.writeBytes(user.TXProtocol.XxooD);
+		builder.writeInt(user.uin);
+		builder.writeBytes(user.txprotocol.fix1);
+		builder.writeBytes(user.txprotocol.clientType);
+		builder.writeBytes(user.txprotocol.fuckMe1);
+		builder.writeBytes(user.txprotocol.fix2);
 
 		ByteBuilder body_builder=new ByteBuilder();
 
@@ -298,10 +264,10 @@ public class SendPackage
 	    body_builder.writeBytes(loginStatus);
 	    body_builder.writeBytes(new byte[] { 0x00, 0x01, 0x00, 0x01, 0x00, 0x04, 0x00, 0x00, 0x00, 0x00 });
 
-		Crypter crypter = new Crypter();
-		byte[] result = crypter.encrypt(body_builder.getDataAndDestroy(),user.TXProtocol.SessionKey);
+		TeaCryptor crypter = new TeaCryptor();
+		byte[] result = crypter.encrypt(body_builder.getDataAndDestroy(),user.txprotocol.sessionKey);
 		builder.writeBytes(result);
-		builder.writeBytes(body_end);
+		builder.writeBytes(markEnd);
 		builder.rewriteShort(builder.totalcount()+2);
 		return builder.getDataAndDestroy();
 
@@ -311,25 +277,25 @@ public class SendPackage
 		System.out.println("[发送包] 命令: 00 58");
 		ByteBuilder builder = new ByteBuilder();
 
-		builder.writeBytes(QQGlobal.QQHeaderBasicFamily);
-		builder.writeBytes(user.TXProtocol.CMainVer);
-		builder.writeBytes(user.TXProtocol.CSubVer);
+		builder.writeBytes(markStart);
+		builder.writeBytes(user.txprotocol.clientVersion1);
+		builder.writeBytes(user.txprotocol.clientVersion2);
 		builder.writeBytes(new byte[]{0x00,0x58});
 		builder.writeShort(GetNextSeq());
-		builder.writeInt(user.QQ);
-		builder.writeBytes(user.TXProtocol.XxooA);
-		builder.writeBytes(user.TXProtocol.DwClientType);
-		builder.writeBytes(user.TXProtocol.DwPubNo);
-		builder.writeBytes(user.TXProtocol.XxooD);
+		builder.writeInt(user.uin);
+		builder.writeBytes(user.txprotocol.fix1);
+		builder.writeBytes(user.txprotocol.clientType);
+		builder.writeBytes(user.txprotocol.fuckMe1);
+		builder.writeBytes(user.txprotocol.fix2);
 
 		ByteBuilder body_builder=new ByteBuilder();
 
-		body_builder.writeInt(user.QQ);
+		body_builder.writeInt(user.uin);
 
-		Crypter crypter = new Crypter();
-		byte[] result = crypter.encrypt(body_builder.getDataAndDestroy(),user.TXProtocol.SessionKey);
+		TeaCryptor crypter = new TeaCryptor();
+		byte[] result = crypter.encrypt(body_builder.getDataAndDestroy(),user.txprotocol.sessionKey);
 		builder.writeBytes(result);
-		builder.writeBytes(body_end);
+		builder.writeBytes(markEnd);
 		builder.rewriteShort(builder.totalcount()+2);
 		return builder.getDataAndDestroy();
 
@@ -342,97 +308,88 @@ public class SendPackage
 		System.out.println("[发送包] 命令: 00 17");
 		ByteBuilder builder = new ByteBuilder();
 
-		builder.writeBytes(QQGlobal.QQHeaderBasicFamily);
-		builder.writeBytes(user.TXProtocol.CMainVer);
-		builder.writeBytes(user.TXProtocol.CSubVer);
+		builder.writeBytes(markStart);
+		builder.writeBytes(user.txprotocol.clientVersion1);
+		builder.writeBytes(user.txprotocol.clientVersion2);
 		builder.writeBytes(new byte[]{0x00,0x17});
 		builder.writeShort(seq);
-		builder.writeInt(user.QQ);
-		builder.writeBytes(user.TXProtocol.XxooA);
-		builder.writeBytes(user.TXProtocol.DwClientType);
-		builder.writeBytes(user.TXProtocol.DwPubNo);
-		builder.writeBytes(user.TXProtocol.XxooD);
+		builder.writeInt(user.uin);
+		builder.writeBytes(user.txprotocol.fix1);
+		builder.writeBytes(user.txprotocol.clientType);
+		builder.writeBytes(user.txprotocol.fuckMe1);
+		builder.writeBytes(user.txprotocol.fix2);
 
 		ByteBuilder body_builder=new ByteBuilder();
 
 		body_builder.writeBytes(data_to_send);
 
-		Crypter crypter = new Crypter();
-		byte[] result = crypter.encrypt(body_builder.getDataAndDestroy(),user.TXProtocol.SessionKey);
+		TeaCryptor crypter = new TeaCryptor();
+		byte[] result = crypter.encrypt(body_builder.getDataAndDestroy(),user.txprotocol.sessionKey);
 		builder.writeBytes(result);
-		builder.writeBytes(body_end);
+		builder.writeBytes(markEnd);
 		builder.rewriteShort(builder.totalcount()+2);
 		return builder.getDataAndDestroy();
 	}
 
 	public static byte[] get00ce(QQUser user,byte[] data_to_send,int seq)
 	{
-		System.out.println("[发送包] 命令: 00 ce");
+		System.out.println("[发送包] 命令: 00 CE");
 		ByteBuilder builder = new ByteBuilder();
 
-		builder.writeBytes(QQGlobal.QQHeaderBasicFamily);
-		builder.writeBytes(user.TXProtocol.CMainVer);
-		builder.writeBytes(user.TXProtocol.CSubVer);
-		builder.writeBytes(Util.str_to_byte("00ce"));
+		builder.writeBytes(markStart);
+		builder.writeBytes(user.txprotocol.clientVersion1);
+		builder.writeBytes(user.txprotocol.clientVersion2);
+		builder.writeBytes(new byte[]{0x00,(byte)0xce});
 		builder.writeShort(seq);
-		builder.writeInt(user.QQ);
-		builder.writeBytes(user.TXProtocol.XxooA);
-		builder.writeBytes(user.TXProtocol.DwClientType);
-		builder.writeBytes(user.TXProtocol.DwPubNo);
-		builder.writeBytes(user.TXProtocol.XxooD);
+		builder.writeInt(user.uin);
+		builder.writeBytes(user.txprotocol.fix1);
+		builder.writeBytes(user.txprotocol.clientType);
+		builder.writeBytes(user.txprotocol.fuckMe1);
+		builder.writeBytes(user.txprotocol.fix2);
 
 		ByteBuilder body_builder=new ByteBuilder();
 
 		body_builder.writeBytes(data_to_send);
 
-		Crypter crypter = new Crypter();
-		byte[] result = crypter.encrypt(body_builder.getDataAndDestroy(),user.TXProtocol.SessionKey);
+		TeaCryptor crypter = new TeaCryptor();
+		byte[] result = crypter.encrypt(body_builder.getDataAndDestroy(),user.txprotocol.sessionKey);
 		builder.writeBytes(result);
-		builder.writeBytes(body_end);
+		builder.writeBytes(markEnd);
 		builder.rewriteShort(builder.totalcount()+2);
 		return builder.getDataAndDestroy();
 
 	}
 
 
-	public static byte[] get0319(QQUser user,long _recvQQ,byte[] MessageTime){
-		Util.log("[发送包] 命令: 03 19");
+	public static byte[] get0319(QQUser user,long recvqq,byte[] MessageTime){
+		System.out.println("[发送包] 命令: 03 19");
 		ByteBuilder builder = new ByteBuilder();
-		builder.writeBytes(QQGlobal.QQHeaderBasicFamily);
-		builder.writeBytes(user.TXProtocol.CMainVer);
-		builder.writeBytes(user.TXProtocol.CSubVer);
-		builder.writeBytes(Util.str_to_byte("0319"));
+		builder.writeBytes(markStart);
+		builder.writeBytes(user.txprotocol.clientVersion1);
+		builder.writeBytes(user.txprotocol.clientVersion2);
+		builder.writeBytes(new byte[]{0x03,0x19});
 		builder.writeShort(GetNextSeq());
-		builder.writeInt(user.QQ);
+		builder.writeInt(user.uin);
 		builder.writeBytes(new byte[]
 						   {
 							   0x04, 0x00, 0x00, 0x00, 0x01, 0x01, 0x01, 0x00, 0x00, 0x68, 0x1C, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 							   0x00, 0x00
 						   });
-		ByteBuilder body_builder=new ByteBuilder();
-
-
-		body_builder.writeBytes(new byte[] { 0x00, 0x00, 0x00, 0x07 });
+		ByteBuilder body_builder = new ByteBuilder()
+			.writeBytes(new byte[] { 0x00, 0x00, 0x00, 0x07 });
 		ByteBuilder data_builder=new ByteBuilder();
-
-		data_builder.writeBytes(Util.str_to_byte("0A0C08"));
-		data_builder.writeBytes(Util.str_to_byte(Util.PB_toLength(_recvQQ)));
-		data_builder.writeByte((byte) 0x10);
-		data_builder.writeBytes(
-			Util.str_to_byte(
-				Util.PB_toLength(Long.parseLong(Util.byte2HexString(MessageTime).replace(" ",""),16))));
-		data_builder.writeBytes(new byte[] { 0x20, 0x00 });
-		//数据长度
-
-		body_builder.writeInt(body_builder.totalcount());
-		body_builder.writeBytes(Util.str_to_byte("08011203980100"));
-		//数据
-		body_builder.writeBytes(data_builder.getDataAndDestroy());
-
-		Crypter crypter = new Crypter();
-		byte[] result = crypter.encrypt(body_builder.getDataAndDestroy(),user.TXProtocol.SessionKey);
+		data_builder.j(1, recvqq);
+		data_builder.j(2, user.uin);
+		ByteBuilder tmp_builder = new ByteBuilder();
+		tmp_builder.j(1, data_builder.getDataAndDestroy());
+		tmp_builder.j(4, 0);
+		body_builder.writeInt(tmp_builder.totalcount())
+			.writeBytes(new byte[]{0x08,0x01,0x12,0x03,(byte)0x98,0x01,0x00})
+			.writeBytes(tmp_builder.getDataAndDestroy());
+		TeaCryptor crypter = new TeaCryptor();
+		byte[] result = crypter.encrypt(body_builder.getDataAndDestroy(),user.txprotocol.sessionKey);
 		builder.writeBytes(result);
-		builder.writeBytes(body_end);
+		builder.writeBytes(markEnd);
 		builder.rewriteShort(builder.totalcount()+2);
 		return builder.getDataAndDestroy();
 	}
@@ -440,18 +397,17 @@ public class SendPackage
 	public static byte[] get0002(QQUser user,String message,long groupUin,int type){
 		System.out.println("[发送包] 命令: 00 02");
 		ByteBuilder builder = new ByteBuilder();
-		builder.writeBytes(QQGlobal.QQHeaderBasicFamily);
-		builder.writeBytes(user.TXProtocol.CMainVer);
-		builder.writeBytes(user.TXProtocol.CSubVer);
+		builder.writeBytes(markStart);
+		builder.writeBytes(user.txprotocol.clientVersion1);
+		builder.writeBytes(user.txprotocol.clientVersion2);
 		builder.writeBytes(new byte[]{0x00,0x02});
 		builder.writeShort(GetNextSeq());
-		builder.writeInt(user.QQ);
-		builder.writeBytes(user.TXProtocol.XxooA);
-		builder.writeBytes(user.TXProtocol.DwClientType);
-		builder.writeBytes(user.TXProtocol.DwPubNo);
-		builder.writeBytes(user.TXProtocol.XxooD);
+		builder.writeInt(user.uin);
+		builder.writeBytes(user.txprotocol.fix1);
+		builder.writeBytes(user.txprotocol.clientType);
+		builder.writeBytes(user.txprotocol.fuckMe1);
+		builder.writeBytes(user.txprotocol.fix2);
 		ByteBuilder body_builder=new ByteBuilder();
-		long dateTime = Util.GetTimeSeconds(new Date());
 		long group = Util.ConvertQQGroupId(groupUin);
 		switch(type){
 			case 0:
@@ -503,10 +459,10 @@ public class SendPackage
 				}
 
 		}
-		Crypter crypter = new Crypter();
-		byte[] result = crypter.encrypt(body_builder.getDataAndDestroy(),user.TXProtocol.SessionKey);
+		TeaCryptor crypter = new TeaCryptor();
+		byte[] result = crypter.encrypt(body_builder.getDataAndDestroy(),user.txprotocol.sessionKey);
 		builder.writeBytes(result);
-		builder.writeBytes(body_end);
+		builder.writeBytes(markEnd);
 		builder.rewriteShort(builder.totalcount()+2);
 		return builder.getDataAndDestroy();
 	}
@@ -515,15 +471,14 @@ public class SendPackage
 	public static byte[] sendpic(QQUser user,String message,long groupUin){
 		System.out.println("[发送包] 命令: 00 02");
 		ByteBuilder builder = new ByteBuilder();
-		builder.writeBytes(QQGlobal.QQHeaderBasicFamily);
-		builder.writeBytes(user.TXProtocol.CMainVer);
-		builder.writeBytes(user.TXProtocol.CSubVer);
+		builder.writeBytes(markStart);
+		builder.writeBytes(user.txprotocol.clientVersion1);
+		builder.writeBytes(user.txprotocol.clientVersion2);
 		builder.writeBytes(Util.str_to_byte("0002"));
 		builder.writeShort(GetNextSeq());
-		builder.writeInt(user.QQ);
+		builder.writeInt(user.uin);
 		builder.writeBytes(Util.str_to_byte("02 00 00 00 01 01 01 00 00 68 20"));
 		ByteBuilder body_builder=new ByteBuilder();
-		long dateTime = Util.GetTimeSeconds(new Date());
 		long group = Util.ConvertQQGroupId(groupUin);
 		byte[] guid = ("{"+Util.GetMD5ToGuidHashFromFile(message) + "}."+message.split("[.]")[message.split("[.]").length-1]).getBytes();
 		body_builder.writeByte ((byte)0x2A);
@@ -542,10 +497,10 @@ public class SendPackage
 		body_builder.writeBytes (Util.str_to_byte("20 20 20 20 20 20 35 30 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20"));
 		body_builder.writeBytes(guid);
 		body_builder.writeByte ((byte)0x41);
-		Crypter crypter = new Crypter();
-		byte[] result = crypter.encrypt(body_builder.getDataAndDestroy(),user.TXProtocol.SessionKey);
+		TeaCryptor crypter = new TeaCryptor();
+		byte[] result = crypter.encrypt(body_builder.getDataAndDestroy(),user.txprotocol.sessionKey);
 		builder.writeBytes(result);
-		builder.writeBytes(body_end);
+		builder.writeBytes(markEnd);
 		builder.rewriteShort(builder.totalcount()+2);
 		return builder.getDataAndDestroy();
 	}
@@ -553,34 +508,33 @@ public class SendPackage
 	public static byte[] get00cd(QQUser user,String message,long friendUin,int type){
 		System.out.println("[发送包] 命令: 00 cd");
 		ByteBuilder builder = new ByteBuilder();
-		builder.writeBytes(QQGlobal.QQHeaderBasicFamily);
-		builder.writeBytes(user.TXProtocol.CMainVer);
-		builder.writeBytes(user.TXProtocol.CSubVer);
+		builder.writeBytes(markStart);
+		builder.writeBytes(user.txprotocol.clientVersion1);
+		builder.writeBytes(user.txprotocol.clientVersion2);
 		builder.writeBytes(Util.str_to_byte("00cd"));
 		builder.writeShort(GetNextSeq());
-		builder.writeInt(user.QQ);
-		builder.writeBytes(user.TXProtocol.XxooA);
-		builder.writeBytes(user.TXProtocol.DwClientType);
-		builder.writeBytes(user.TXProtocol.DwPubNo);
-		builder.writeBytes(user.TXProtocol.XxooD);
-
+		builder.writeInt(user.uin);
+		builder.writeBytes(user.txprotocol.fix1);
+		builder.writeBytes(user.txprotocol.clientType);
+		builder.writeBytes(user.txprotocol.fuckMe1);
+		builder.writeBytes(user.txprotocol.fix2);
 		ByteBuilder body_builder=new ByteBuilder();
-		long dateTime = Util.GetTimeSeconds(new Date());
-		byte[] md5 = user.TXProtocol.SessionKey;
+		long dateTime = new Date().getTime()/1000;
+		byte[] md5 = user.txprotocol.sessionKey;
 		switch(type){
 			case 0:
 				{
 					byte[] message_to_send = Util.constructmessage(user,message.getBytes());
-					body_builder.writeInt(user.QQ);
+					body_builder.writeInt(user.uin);
 					body_builder.writeInt(friendUin);
                     body_builder.writeBytes(new byte[]
 											{
 												0x00, 0x00, 0x00, 0x0D, 0x00, 0x01, 0x00, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x03, 0x00,
 												0x01, 0x01
 											});
-                    body_builder.writeBytes(user.TXProtocol.CMainVer);
-                    body_builder.writeBytes(user.TXProtocol.CSubVer);
-                    body_builder.writeInt(user.QQ);
+                    body_builder.writeBytes(user.txprotocol.clientVersion1);
+                    body_builder.writeBytes(user.txprotocol.clientVersion2);
+                    body_builder.writeInt(user.uin);
                     body_builder.writeInt(friendUin);
                     body_builder.writeBytes(md5);
                     body_builder.writeBytes(new byte[] { 0x00, 0x0B });
@@ -605,12 +559,12 @@ public class SendPackage
 			case 1:
 				{
 					byte[] message_to_send =ZLibUtils.compress(message.getBytes());
-					body_builder.writeInt(user.QQ);
+					body_builder.writeInt(user.uin);
                     body_builder.writeInt(friendUin);
                     body_builder.writeBytes(new byte[] { 0x00, 0x00, 0x00, 0x08, 0x00, 0x01, 0x00, 0x04 });
                     body_builder.writeBytes(new byte[] { 0x00, 0x00, 0x00, 0x00 });
                     body_builder.writeBytes(Util.str_to_byte("370F"));
-                    body_builder.writeInt(user.QQ);
+                    body_builder.writeInt(user.uin);
                     body_builder.writeInt(friendUin);
                     body_builder.writeBytes(md5);
                     body_builder.writeBytes(Util.str_to_byte("000B"));
@@ -628,10 +582,10 @@ public class SendPackage
 		}
 
 
-		Crypter crypter = new Crypter();
-		byte[] result = crypter.encrypt(body_builder.getDataAndDestroy(),user.TXProtocol.SessionKey);
+		TeaCryptor crypter = new TeaCryptor();
+		byte[] result = crypter.encrypt(body_builder.getDataAndDestroy(),user.txprotocol.sessionKey);
 		builder.writeBytes(result);
-		builder.writeBytes(body_end);
+		builder.writeBytes(markEnd);
 		builder.rewriteShort(builder.totalcount()+2);
 		return builder.getDataAndDestroy();
 	}
@@ -639,24 +593,24 @@ public class SendPackage
 	public static byte[] get0388(QQUser user,String message,long groupUin){
 		System.out.println("[发送包] 命令: 03 88");
 		ByteBuilder builder = new ByteBuilder();
-		builder.writeBytes(QQGlobal.QQHeaderBasicFamily);
-		builder.writeBytes(user.TXProtocol.CMainVer);
-		builder.writeBytes(user.TXProtocol.CSubVer);
+		builder.writeBytes(markStart);
+		builder.writeBytes(user.txprotocol.clientVersion1);
+		builder.writeBytes(user.txprotocol.clientVersion2);
 		builder.writeBytes(Util.str_to_byte("0388"));
 		int seq = GetNextSeq();
 		builder.writeShort(seq);
-		builder.writeInt(user.QQ);
+		builder.writeInt(user.uin);
 		builder.writeBytes(Util.str_to_byte("04 00 00 00 01 01 01 00 00 68 20 00 00 00 00 00 00 00 00 "));
 		ByteBuilder body_builder = new ByteBuilder();
 	    BufferedImage img = Util.get_img(message);
 		long width = img.getWidth(); // 图片的宽度
 		long height = img.getHeight(); // 图片的高度
-		byte[] img_byte = Util.bytefromfile(message);
+		byte[] img_byte = Util.readByteFromFile(message);
 		long img_length = Util.getfilelength(message);
 		byte[] md5 = Util.MD5(img_byte);
 		ByteBuilder img_builder=new ByteBuilder();
 		img_builder.j(1,groupUin)
-			.j(2, user.QQ)
+			.j(2, user.uin)
 			.j(3, 0)
 			.j(4, md5)
 			.j(5, img_length)
@@ -675,16 +629,16 @@ public class SendPackage
 		body_builder.writeInt(tmp.length - 1);
 		body_builder.writeBytes(new byte[]{0x08,0x01,0x12,0x03,(byte)0x98,0x01,0x01,0x10,0x01});
 		body_builder.writeBytes(tmp);
-		Crypter crypter = new Crypter();
-		byte[] result = crypter.encrypt(body_builder.getDataAndDestroy(),user.TXProtocol.SessionKey);
+		TeaCryptor crypter = new TeaCryptor();
+		byte[] result = crypter.encrypt(body_builder.getDataAndDestroy(),user.txprotocol.sessionKey);
 		builder.writeBytes(result);
-		builder.writeBytes(body_end);
+		builder.writeBytes(markEnd);
 		PictureStore store = new PictureStore();
 		store.pictureId = seq;
 		store.data = img_byte;
 		store.groupUin =groupUin;
 		store.fileName = message;
-		user.imgs.add(store);
+		user.imageStoreCache.add(store);
 		builder.rewriteShort(builder.totalcount()+2);
 		return builder.getDataAndDestroy();
 	}

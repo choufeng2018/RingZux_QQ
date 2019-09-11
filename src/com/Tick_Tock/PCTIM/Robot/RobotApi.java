@@ -1,5 +1,5 @@
 package com.Tick_Tock.PCTIM.Robot;
-import com.Tick_Tock.PCTIM.sdk.*;
+import com.Tick_Tock.PCTIM.Sdk.*;
 
 import com.Tick_Tock.PCTIM.*;
 import com.Tick_Tock.PCTIM.Message.*;
@@ -8,40 +8,34 @@ import com.Tick_Tock.PCTIM.Client.*;
 
 public class RobotApi implements API
 {
-
-	@Override
-	public void SendFriendXml(String text, long friendUin)
+	@Override public void sendFriendXml(String text, long friendUin)
 	{
-		SendMessage.SendFriendXmlMessage(this.user, this.socket, text,friendUin);
+		SendMessage.sendFriendXmlMessage(this.user, this.socket, text,friendUin);
 		
 	}
 
-
-	@Override
-	public void SendGroupMessage(String text, long groupUin)
+	@Override public void sendGroupMessage(String text, long groupUin)
 	{
-		SendMessage.SendGroupMessage(this.user, this.socket, text,groupUin);
+		SendMessage.sendGroupMessage(this.user, this.socket, text,groupUin);
 	}
 
-	@Override
-	public void SendGroupImage(String text, long groupUin)
+	@Override public void sendGroupImage(String text, long groupUin)
 	{
-		SendMessage.SendGroupImageMessage(this.user, this.socket, text,groupUin);
+		SendMessage.sendGroupImageMessage(this.user, this.socket, text,groupUin);
 	}
 
-	@Override
-	public void SendGroupXml(String text, long groupUin)
+	@Override public void sendGroupXml(String text, long groupUin)
 	{
-		SendMessage.SendGroupXmlMessage(this.user, this.socket, text,groupUin);
+		SendMessage.sendGroupXmlMessage(this.user, this.socket, text,groupUin);
 	}
 
-	@Override
-	public void SendFriendMessage(String text, long friendUin)
+	@Override public void sendFriendMessage(String text, long friendUin)
 	{
-		SendMessage.SendFriendMessage(this.user, this.socket, text,friendUin);
+		SendMessage.sendFriendMessage(this.user, this.socket, text,friendUin);
 	}
 	
 	private RingzuxHandler socket = null;
+	
 	private QQUser user = null;
 
 	public RobotApi(RingzuxHandler _socket, QQUser _user)
@@ -50,16 +44,14 @@ public class RobotApi implements API
 		this.socket = _socket;
 	}
 	
-	@Override
-	public Group_List getgrouplist()
+	@Override public GroupList getGroupList()
 	{
 
-		return this.user.group_list;
+		return this.user.groupList;
 	}
 
-	@Override
-	public Friend_List getfriendlist()
+	@Override public FriendList getFriendList()
 	{
-		return this.user.friend_list;
+		return this.user.friendList;
 	}
 }

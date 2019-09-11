@@ -24,13 +24,12 @@ public class RingzuxClient implements Runnable
 
 	private RingzuxHandler handler;
 
-	private Bootstrap bootstrap;
+	private Bootstrap bootStrap;
 
 	private NioEventLoopGroup eventLoopGroup;
 
 	public RingzuxClient(int port, String host)
 	{
-		System.out.println(host);
 		this.port = port;
 		this.host = host;
 		this.eventLoopGroup = new NioEventLoopGroup();
@@ -39,7 +38,6 @@ public class RingzuxClient implements Runnable
 	
 	public RingzuxClient(int port, String host,QQUser user)
 	{
-		System.out.println(host);
 		this.port = port;
 		this.host = host;
 		this.eventLoopGroup = new NioEventLoopGroup();
@@ -50,11 +48,11 @@ public class RingzuxClient implements Runnable
 	{
 		try
 		{
-			this.bootstrap = new Bootstrap();
-			bootstrap.channel(NioSocketChannel.class);
-			bootstrap.group(eventLoopGroup);
-			bootstrap.remoteAddress(host,port);
-			bootstrap.handler(new ChannelInitializer<SocketChannel>() {
+			this.bootStrap = new Bootstrap();
+			bootStrap.channel(NioSocketChannel.class);
+			bootStrap.group(eventLoopGroup);
+			bootStrap.remoteAddress(host,port);
+			bootStrap.handler(new ChannelInitializer<SocketChannel>() {
 					@Override
 					protected void initChannel(SocketChannel socketChannel)
 					throws Exception
@@ -75,16 +73,9 @@ public class RingzuxClient implements Runnable
 		}
 	}
 
-	
-		
-	
-
 	private void connect() throws InterruptedException
 	{
-
-		ChannelFuture future = bootstrap.connect(host, port).sync();
-
+		ChannelFuture future = bootStrap.connect(host, port).sync();
 		future.channel().closeFuture().sync();
-
 	}
 }

@@ -1,4 +1,4 @@
-package com.Tick_Tock.PCTIM.sdk;
+package com.Tick_Tock.PCTIM.Sdk;
 
 public class MessagePart
 {

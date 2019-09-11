@@ -4,122 +4,70 @@ import java.util.*;
 
 public class TXProtocol
 {
-	public byte[] PngKey = new byte[0];
-	
-	public byte[] PngToken =new byte[0];
-	public byte[] CMainVer = {0x37};
-	public byte[] CSubVer = {0x13};
-	
-	public byte[] XxooA = { 0x03, 0x00, 0x00 };
-	public byte[] XxooD = { 0x00, 0x00, 0x00, 0x00 };
-	public byte[] XxooB = {0x01};
-	public byte[] SubVer  = {0x00,0x01};
-	public byte[] EcdhVer  = {0x01,0x03};
-	public byte[] DwClientType = { 0x00, 0x01, 0x2e, 0x01 };
-	
-	
-	public byte[] DwPubNo = { 0x00, 0x00, 0x68, 0x52 };
-	
-	public byte[] DwSsoVersion  = {0x00,0x00,0x04,0x53};
-	public byte[] DwServiceId  = {0x00,0x00,0x00,0x01};
-	
-	public  byte[] DwClientVer  = Util.str_to_byte("00 00 15 85");
-	
-	
-	public int  WRedirectCount =0;
-	
-	public String DwServerIP  = "";
-	public short WServerPort  = 0;
-	public List<byte[]>  WRedirectips = new ArrayList<byte[]>();
-	
-	public static byte[] CPingType  ={0x02};
-	
-	
-	public byte[] BufDhPublicKey  = Util.str_to_byte("02 6D 28 41 D2 A5 6F D2 FC 3E 2A 1F 03 75 DE 6E 28 8F A8 19 3E 5F 16 49 D3");
-	
-	public String DwRedirectIP ;
-	
-	public byte[] BufSigClientAddr ;
-	public Date DwServerTime ;
-	public byte[] DwServerTime_Byte ;
-	
-	public long TimeDifference ;
-	public String DwClientIP ;
-	public byte[] DwClientIP_Byte ;
-
-	public short WClientPort ;
-	
-	public byte[] DwIsp = new byte[] {0x00,0x00,0x00,0x00};
-	public byte[] DwIdc = new byte[] {0x00,0x00,0x12,0x00};
-	
-	public short WRedirectPort ;
-	public byte[] WRedirectPort_Byte ;
-	
-	public byte[] BufDhShareKey  = Util.str_to_byte("1A E9 7F 7D C9 73 75 98 AC 02 E0 80 5F A9 C6 AF");
-	
-	public String BufComputerName  = Util.read_config("computername");
-	
-	public byte[] BufTgtgt ;
-	
-	public byte[] BRememberPwdLogin  = {0x00};
-	public byte[] BufComputerId_crc32_reversed  = Util.str_to_byte("CCC2E96A");
-	//public byte[] bufComputerID  = Util.RandomKey();
-	public byte[] BufComputerIdEx  = Util.str_to_byte("7798000BAB5D4F3D3050652C4A2AF865");
-
-	public byte[] BufComputerIdEx_crc32_reversed  = Util.str_to_byte("3CDE845F");
-
-	public byte[] BufDeviceId  =Util.str_to_byte("0fabbe2104a72af1e19da1956a363df07b22ff2ec2cac92ba8d6da459d31a960");
-	
-	public byte[] BufComputerId  ={ 0x43, 0x04, 0x21, 0x7D, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
-	
-	
-	public byte[] BufTgtgtKey  = Util.RandomKey();
-	
-	public byte[] BufSid  = Util.str_to_byte("1EC12571B24CEA919A6E8DE6954ECE06");
-	public byte[] BufMacGuid  = Util.str_to_byte("214B1A0409ED1970987551BB2D3A7E0A");
-	public byte[] BufSigPic;
-	
-	public byte[] QdData ;
-	public byte[] BufQdKey =
-	{ 0x77, 0x45, 0x37, 0x5e, 0x33, 0x69, 0x6d, 0x67, 0x23, 0x69, 0x29, 0x25, 0x68, 0x31, 0x32, 0x5d };
-	public byte[] DwQdVerion_Byte = {0x02,0x04,0x04,0x04};
-	public byte[] QdSufFix = { 0x68 };
-	public byte[] QdPreFix = { 0x3E };
-	public short CQdProtocolVer = 0x0063;
-	public byte[] CQdProtocolVer_Byte = {0x00,0x63};
-	public long DwQdVerion = 0x02040404;
-	public short WQdCsCmdNo = 0x0004;
-	public byte[] WQdCsCmdNo_Byte = {0x00,0x04};
-
-	public byte[] CQdCcSubNo = {0x00};
-	
-	
-	public byte[] COsType = {0x03};
-	
-	public byte[] BIsWow64 = {0x01};
-	
-	
-	public byte[] DwDrvVersionInfo = {0x01,0x02};
-	
-	public byte[] BufVersionTsSafeEditDat = Util.str_to_byte("07df000a000c0001");
-
-	/// <summary>
-	///     QScanEngine.dll的"文件版本"
-	/// </summary>
-	public byte[] BufVersionQScanEngineDll = { 0x00, 0x04, 0x00, 0x03, 0x00, 0x04, 0x20, 0x5c };
-	public byte[] BufTgtGtKey ;
-	public byte[] BufTgt ;
-	public byte[] Buf16BytesGtKeySt ;
-	public byte[] BufServiceTicket ;
-	public byte[] Buf16BytesGtKeyStHttp ;
-	public byte[] BufServiceTicketHttp ;
-	public byte[] BufGtKeyTgtPwd ;
-	public byte[] BufSessionKey ;
-	public byte[] BufSigSession ;
-	public byte[] BufPwdForConn ;
-	public byte[] ClientKey ;
-	
-	public byte[] SessionKey ;
-	
-	
+	public byte[] verificationImageKey = new byte[0];
+	public byte[] verificationImageToken =new byte[0];
+	public byte[] clientVersion1 = {0x38};
+	public byte[] clientVersion2 = {0x29};
+	public byte[] fix1 = { 0x03, 0x00, 0x00 };
+	public byte[] fix2 = { 0x00, 0x00, 0x00, 0x00 };
+	public byte[] fix3 = {0x01};
+	public byte[] ecdhProtocolVersion  = {0x00,0x02};//决定是否二次协商
+	public byte[] ecdhAlgorithmVersion  = {0x01,0x03};
+	public byte[] clientType = { 0x00, 0x01, 0x01, 0x01 };
+	public byte[] fuckMe1 = { 0x00, 0x00, 0x69, 0x23 };
+	public byte[] ssoVersion  = {0x00,0x00,0x04,0x56};
+	public byte[] serviceId  = {0x00,0x00,0x00,0x01};
+	public byte[] fuckMe2  = Util.str_to_byte("00 00 16 09");
+	public byte[] fuckMe3  = Util.str_to_byte("16 09");
+	public int  redirectionCount =0;
+	public String serverAddres  = "";
+	public short serverPort  = 0;
+	public List<byte[]>  redirctionAdrresRecord = new ArrayList<byte[]>();
+	public byte pingType  = 0x02;
+	public byte[] ecdhPublicKey  ;
+	public byte[] ecdhShareKey ;
+	public String redirectedAddress ;
+	public byte[] sigClientAddress ;
+	public int serverTime ;
+	public String clientAdrres ;
+	public short clientPort ;
+	public byte[] isp = new byte[] {0x00,0x00,0x00,0x00};
+	public byte[] idc = new byte[] {0x00,0x00,0x12,0x00};
+	public short redirectedPort ;
+	public String computerName  = Util.readConfig("COMPUTERNAME");
+	public byte[] tgtgt ;
+	public byte[] rememberPassword  = {0x00};
+	public byte[] computerIdEx  = Util.random_byte(16);//{0x77,(byte)0x98,(byte)0x00,(byte)0x0B,(byte)0xAB,(byte)0x5D,(byte)0x4F,(byte)0x3D,(byte)0x30,(byte)0x50,(byte)0x65,(byte)0x2C,(byte)0x4A,(byte)0x2A,(byte)0xF8,(byte)0x65};
+	public byte[] deviceId  = Util.random_byte(32);//{0x0f,(byte)0xab,(byte)0xbe,(byte)0x21,(byte)0x04,(byte)0xa7,(byte)0x2a,(byte)0xf1,(byte)0xe1,(byte)0x9d,(byte)0xa1,(byte)0x95,(byte)0x6a,(byte)0x36,(byte)0x3d,(byte)0xf0,(byte)0x7b,(byte)0x22,(byte)0xff,(byte)0x2e,(byte)0xc2,(byte)0xca,(byte)0xc9,(byte)0x2b,(byte)0xa8,(byte)0xd6,(byte)0xda,(byte)0x45,(byte)0x9d,(byte)0x31,(byte)0xa9,(byte)0x60};
+	public byte[] computerId  =  Util.RandomKey();//{ 0x43, 0x04, 0x21, 0x7D, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+	public byte[] tgtgtKey  = Util.RandomKey();
+	public byte[] sid  = {0x1E,(byte)0xC1,(byte)0x25,(byte)0x71,(byte)0xB2,(byte)0x4C,(byte)0xEA,(byte)0x91,(byte)0x9A,(byte)0x6E,(byte)0x8D,(byte)0xE6,(byte)0x95,(byte)0x4E,(byte)0xCE,(byte)0x06};
+	public byte[] macGuid  = Util.RandomKey();//{21,(byte)0x4B,(byte)0x1A,(byte)0x04,(byte)0x09,(byte)0xED,(byte)0x19,(byte)0x70,(byte)0x98,(byte)0x75,(byte)0x51,(byte)0xBB,(byte)0x2D,(byte)0x3A,(byte)0x7E,(byte)0x0A}
+	public byte[] sigImage;
+	public byte[] qdData ;
+	public byte[] qdKey = { 0x77, 0x45, 0x37, 0x5e, 0x33, 0x69, 0x6d, 0x67, 0x23, 0x69, 0x29, 0x25, 0x68, 0x31, 0x32, 0x5d };
+	public byte[] qdVerion = {0x02,0x04,0x04,0x04};
+	public byte[] qdSufFix = { 0x68 };
+	public byte[] qdPreFix = { 0x3E };
+	public byte[] qdProtocolVersion = {0x00,0x63};
+	public byte[] qdCsCmdNo = {0x00,0x04};
+	public byte[] qdCcSubNo = {0x00};
+	public byte[] osType = {0x03};
+	public byte[] isWow64 = {0x01};
+	public byte[] drvVersionInfo = {0x01,0x02};
+	public byte[] versionTsSafeEditDat = {07,(byte)0xdf,(byte)0x00,(byte)0x0a,(byte)0x00,(byte)0x0c,(byte)0x00,(byte)0x01};
+	public byte[] versionQScanEngineDll = { 0x00, 0x04, 0x00, 0x03, 0x00, 0x04, 0x20, 0x5c };
+	public byte[] tgtGtKey ;
+	public byte[] tgt ;
+	public byte[] _16BytesGtKeySt ;
+	public byte[] serviceTicket ;
+	public byte[] _16BytesGtKeyStHttp ;
+	public byte[] serviceTicketHttp ;
+	public byte[] gtKeyTgtPwd ;
+	public byte[] sessionKey ;
+	public byte[] sigSession ;
+	public byte[] pwdForConn ;
+	public byte[] clientKey ;
+	public byte[] qqexeMD5  = {(byte)0xfa,(byte)0xcf,(byte)0x7c,(byte)0xc5,(byte)0xae,(byte)0x02,(byte)0xe6,(byte)0x65,(byte)0x0c,(byte)0x01,(byte)0x07,(byte)0xcd,(byte)0xfe,(byte)0x0e,(byte)0x1b,(byte)0x2c};
+	public byte[] Online = {0x0A};
 }

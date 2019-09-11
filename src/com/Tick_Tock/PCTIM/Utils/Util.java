@@ -1,7 +1,7 @@
 package com.Tick_Tock.PCTIM.Utils;
 import com.Tick_Tock.PCTIM.*;
 import com.Tick_Tock.PCTIM.Message.*;
-import com.Tick_Tock.PCTIM.sdk.*;
+import com.Tick_Tock.PCTIM.Sdk.*;
 import io.netty.buffer.*;
 import java.awt.image.*;
 import java.io.*;
@@ -15,67 +15,79 @@ import javax.imageio.*;
 import javax.net.ssl.*;
 import org.json.*;
 
-
-
-class textimg{
-
-	public textimg getobj(){
-		return new textimg();
+class textImage
+{
+	public textImage getobj()
+	{
+		return new textImage();
 	}
-	private int minindex;
-	private int maxindex;
-	private List<String> textimg = new ArrayList<String>();
-	public textimg(){
+	private int minIndex;
+	private int maxIndex;
+	private List<String> textImage = new ArrayList<String>();
+	public textImage()
+	{
 
 	}
 
-	public void addline(String data){
-		textimg.add(data);
-		if(this.getmaxindex(data)!=-1&&this.maxindex<this.getmaxindex(data)){
-			this.maxindex=this.getmaxindex(data);
+	public void addLine(String data)
+	{
+		textImage.add(data);
+		if (this.getMaxIndex(data) != -1 && this.maxIndex < this.getMaxIndex(data))
+		{
+			this.maxIndex = this.getMaxIndex(data);
 		}
-		if(this.getminindex(data)!=-1&&this.minindex>this.getminindex(data)){
-			this.minindex=this.getminindex(data);
+		if (this.getMinIndex(data) != -1 && this.minIndex > this.getMinIndex(data))
+		{
+			this.minIndex = this.getMinIndex(data);
 		}
 
 	}
 
-	public int getminindex(String data){
+	public int getMinIndex(String data)
+	{
 		int index =0;
-		while(index<data.length()){
-			if(!String.valueOf(data.charAt(index)).equals(" ")){
+		while (index < data.length())
+		{
+			if (!String.valueOf(data.charAt(index)).equals(" "))
+			{
 				return index;
 			}
-			index+=1;
+			index += 1;
 		}
 		return -1;
 	}
 
-	public int getmaxindex(String data){
-		int index =data.length()-1;
-		while(index>-1){
-			if(!String.valueOf(data.charAt(index)).equals(" ")){
+	public int getMaxIndex(String data)
+	{
+		int index =data.length() - 1;
+		while (index > -1)
+		{
+			if (!String.valueOf(data.charAt(index)).equals(" "))
+			{
 				return index;
 			}
-			index-=1;
+			index -= 1;
 		}
 		return -1;
 	}
 
-	public String getresultString(){
+	public String getResultString()
+	{
 		String result = "";
-		for(int i=0;i<this.textimg.size();i+=1){
-			result+=this.textimg.get(i).substring(this.minindex,this.maxindex)+"\n";
+		for (int i=0;i < this.textImage.size();i += 1)
+		{
+			result += this.textImage.get(i).substring(this.minIndex, this.maxIndex) + "\n";
 		}
-		return result.replaceAll("\n$","");
+		return result.replaceAll("\n$", "");
 	}
 }
 
 
 public class Util
 {
+	public static String ua = "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.186 Safari/537.36";
 
-	public static byte[] bytefromfile(String file_name)
+	public static byte[] readByteFromFile(String file_name)
 	{
 
 		try
@@ -94,18 +106,20 @@ public class Util
 		return null;
 
 	}
-	
-	private static byte[] toByteArray(InputStream in) throws IOException {
+
+	private static byte[] toByteArray(InputStream in) throws IOException
+	{
 
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		byte[] buffer = new byte[1024 * 4];
 		int n = 0;
-		while ((n = in.read(buffer)) != -1) {
+		while ((n = in.read(buffer)) != -1)
+		{
 			out.write(buffer, 0, n);
 		}
 		return out.toByteArray();
 	}
-	
+
 	public static byte[] bufToBytes(ByteBuf buf)
 	{
 		byte[] h =new byte[buf.readableBytes()];
@@ -113,18 +127,9 @@ public class Util
 		buf.readerIndex(0);//必须把指针调回0
 		return h;
 	}
-
 	
-	public static String ua = "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.186 Safari/537.36";
-
 	
-		
-	public static boolean openlog =Boolean.valueOf(Util.read_config("activate_log"));
-
-	
-
-
-	public static void getfriendlist(QQUser user)
+	public static void getFriendList(QQUser user)
 	{
 		try
 		{  
@@ -159,7 +164,7 @@ public class Util
 				sb.append(line);  
 			}  
 			br.close();// 关闭流
-			user.friend_list=Util.parsefrienddata(sb.toString());
+			user.friendList = Util.parseFriendData(sb.toString());
 			connection.disconnect();// 断开连接
 
 
@@ -171,9 +176,9 @@ public class Util
 
 	}
 
-	public static Friend_List parsefrienddata(String data)
+	public static FriendList parseFriendData(String data)
 	{
-		Friend_List friendlist = new Friend_List();
+		FriendList friendList = new FriendList();
 		try
 		{
 			JSONObject root = new JSONObject(data);
@@ -183,23 +188,21 @@ public class Util
 				for (int i=0;i < root_result_0_mems.length();i += 1)
 				{
 					JSONObject root_result_0_memsx = root_result_0_mems.getJSONObject(i);
-					friendlist.members.add(friendlist.getfriendobj().set_friend_name(root_result_0_memsx.getString("name")).set_friend_uin(root_result_0_memsx.getLong("uin")));
+					friendList.members.add(friendList.getFriendObj().setFriendName(root_result_0_memsx.getString("name")).setFriendUin(root_result_0_memsx.getLong("uin")));
 				}
 			}
 
-			return friendlist;
+			return friendList;
 		}
 		catch (JSONException e)
 		{
 			e.printStackTrace();
 			return null;
 		}
-
-
 	}
 
 
-	public static void getqunlist(QQUser user)
+	public static void getQunList(QQUser user)
 	{
 
 		try
@@ -219,26 +222,20 @@ public class Util
 			connection.setRequestProperty("Cookie", user.quncookie.replaceAll("[_A-Za-z0-9]*=;", "").replaceAll("  ", " "));
             OutputStream outStream = connection.getOutputStream();
 			outStream.write(("bkn=" + user.bkn).getBytes());
-
             outStream.flush();
             outStream.close();
             //读取返回内容
       		String line = null;
-
-
 			// 获取输入流  
 			BufferedReader br= new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));  
-
 			StringBuilder sb = new StringBuilder();  
 			while ((line = br.readLine()) != null)
 			{// 循环读取流  
 				sb.append(line);  
 			}  
 			br.close();// 关闭流
-			user.group_list = Util.parsegroupdata(sb.toString());
+			user.groupList = Util.parseGroupData(sb.toString());
 			connection.disconnect();// 断开连接
-
-
 		}
 		catch (Exception e)
 		{  
@@ -249,9 +246,9 @@ public class Util
 	}
 
 
-	public static Group_List parsegroupdata(String data)
+	public static GroupList parseGroupData(String data)
 	{
-		Group_List grouplist = new Group_List();
+		GroupList grouplist = new GroupList();
 		try
 		{
 			JSONObject root = new JSONObject(data);
@@ -261,39 +258,41 @@ public class Util
 				for (int i=0;i < root_join.length();i += 1)
 				{
 					JSONObject root_joinx = root_join.getJSONObject(i);
-					grouplist.joined_group.add(grouplist.getgroupobj().set_group_name(root_joinx.getString("gn")).set_group_uin(root_joinx.getLong("gc")).set_owner_uin(root_joinx.getLong("owner")));
+					grouplist.joinedGroup.add(grouplist.getgroupobj().setGroupName(root_joinx.getString("gn")).setGroupUin(root_joinx.getLong("gc")).setOwnerUin(root_joinx.getLong("owner")));
 				}
 			}
-			try{
+			try
+			{
 				JSONArray root_manage = root.getJSONArray("manage");
 				if (root_manage != null)
 				{
 					for (int i=0;i < root_manage.length();i += 1)
 					{
 						JSONObject root_managex = root_manage.getJSONObject(i);
-						grouplist.managed_group.add(grouplist.getgroupobj().set_group_name(root_managex.getString("gn")).set_group_uin(root_managex.getLong("gc")).set_owner_uin(root_managex.getLong("owner")));
+						grouplist.managedGroup.add(grouplist.getgroupobj().setGroupName(root_managex.getString("gn")).setGroupUin(root_managex.getLong("gc")).setOwnerUin(root_managex.getLong("owner")));
 					}
 				}
-			}catch (JSONException e)
+			}
+			catch (JSONException e)
 			{
 
 			}
-			try{
+			try
+			{
 				JSONArray root_create = root.getJSONArray("create");
 				if (root_create != null)
 				{
 					for (int i=0;i < root_create.length();i += 1)
 					{
 						JSONObject root_createx = root_create.getJSONObject(i);
-						grouplist.created_group.add(grouplist.getgroupobj().set_group_name(root_createx.getString("gn")).set_group_uin(root_createx.getLong("gc")).set_owner_uin(root_createx.getLong("owner")));
+						grouplist.createdGroup.add(grouplist.getgroupobj().setGroupName(root_createx.getString("gn")).setGroupUin(root_createx.getLong("gc")).setOwnerUin(root_createx.getLong("owner")));
 					}
 				}
-
-			}catch (JSONException e)
-			{
-
 			}
-
+			catch (JSONException e)
+			{
+				
+			}
 			return grouplist;
 		}
 		catch (JSONException e)
@@ -301,23 +300,17 @@ public class Util
 			e.printStackTrace();
 			return null;
 		}
-
-
 	}
 
-	public static void getquncookie(QQUser user)
+	public static void getQunCookie(QQUser user)
 	{
-
 		try
 		{  
-
-
-			URL lll = new URL("https://ssl.ptlogin2.qq.com/jump?pt_clientver=5509&pt_src=1&keyindex=9&clientuin=" + user.QQ + "&clientkey=" + Util.byte2HexString(user.TXProtocol.BufServiceTicketHttp).replaceAll(" ", "") + "&u1=http%3A%2F%2Fqun.qq.com%2Fmember.html%23gid%3D168209441");
+			URL lll = new URL("https://ssl.ptlogin2.qq.com/jump?pt_clientver=5509&pt_src=1&keyindex=9&clientuin=" + user.uin + "&clientkey=" + Util.byte2HexString(user.txprotocol.serviceTicketHttp).replaceAll(" ", "") + "&u1=http%3A%2F%2Fqun.qq.com%2Fmember.html%23gid%3D168209441");
 			HttpURLConnection connection = (HttpURLConnection) lll.openConnection();// 打开连接  
 			connection.setRequestMethod("GET");
 			connection.setRequestProperty("User-Agent", ua);
 			connection.connect();// 连接会话  
-
 			// 获取输入流  
 			BufferedReader br= new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));  
 			String line;  
@@ -328,18 +321,18 @@ public class Util
 			}  
 			br.close();// 关闭流
 			List<String> cookies = connection.getHeaderFields().get("Set-Cookie");
-			user.userskey = "";
+			user.skey = "";
 			for (String cookie : cookies)
 			{
 				if (cookie.matches("skey=.*"))
 				{
-					user.userskey = cookie.replaceAll("skey=", "").replaceAll(";.*", "");
-					user.bkn = Util.GetBkn(user.userskey);
+					user.skey = cookie.replaceAll("skey=", "").replaceAll(";.*", "");
+					user.bkn = Util.getBkn(user.skey);
 				}
 				if (cookie.matches("p_skey=.*"))
 				{
 					user.pskey = cookie.replaceAll("p_skey=", "").replaceAll(";.*", "");
-					user.qungtk = Util.GET_GTK(user.pskey);
+					user.qungtk = Util.getGTK(user.pskey);
 				}
 				user.quncookie += cookie.replaceAll("Path=.*$", "").replaceAll("Expires=.*$", "") + " " ;
 			}
@@ -355,7 +348,6 @@ public class Util
 
 	public static void fuck(String url, QQUser user)
 	{
-
 		try
 		{  
 		    URL lll = new URL(url);
@@ -379,31 +371,26 @@ public class Util
 			{
 				if (cookie.matches("skey=.*"))
 				{
-					user.userskey = cookie.replaceAll("skey=", "").replaceAll(";.*", "");
-					user.bkn = Util.GetBkn(user.userskey);
+					user.skey = cookie.replaceAll("skey=", "").replaceAll(";.*", "");
+					user.bkn = Util.getBkn(user.skey);
 				}
 				if (cookie.matches("p_skey=.*"))
 				{
 					user.pskey = cookie.replaceAll("p_skey=", "").replaceAll(";.*", "");
-					user.qungtk = Util.GET_GTK(user.pskey);
+					user.qungtk = Util.getGTK(user.pskey);
 				}
 				user.quncookie += cookie.replaceAll("Path=.*$", "").replaceAll("Expires=.*$", "") + " " ;
 			}
 			connection.disconnect();// 断开连接  
-
-
-
 		}
 		catch (Exception e)
 		{  
 			e.printStackTrace();
 		}
-
-
 	}
 
 
-	public static void getcookie(QQUser user)
+	public static void getCookie(QQUser user)
 	{
 
 		try
@@ -412,7 +399,7 @@ public class Util
 			Util.trustAllHttpsCertificates();
 			HttpsURLConnection.setDefaultHostnameVerifier(Util.hv);
 
-			URL lll = new URL("https://ssl.ptlogin2.qq.com/jump?pt_clientver=5593&pt_src=1&keyindex=9&ptlang=2052&clientuin=" + user.QQ + "&clientkey=" + Util.byte2HexString(user.TXProtocol.BufServiceTicketHttp).replaceAll(" ", "") + "&u1=https:%2F%2Fuser.qzone.qq.com%2F417085811%3FADUIN=417085811%26ADSESSION=" + (new Date().getTime() + 28800000) + "%26ADTAG=CLIENT.QQ.5593_MyTip.0%26ADPUBNO=26841&source=namecardhoverstar");
+			URL lll = new URL("https://ssl.ptlogin2.qq.com/jump?pt_clientver=5593&pt_src=1&keyindex=9&ptlang=2052&clientuin=" + user.uin + "&clientkey=" + Util.byte2HexString(user.txprotocol.serviceTicketHttp).replaceAll(" ", "") + "&u1=https:%2F%2Fuser.qzone.qq.com%2F417085811%3FADUIN=417085811%26ADSESSION=" + (new Date().getTime() + 28800000) + "%26ADTAG=CLIENT.QQ.5593_MyTip.0%26ADPUBNO=26841&source=namecardhoverstar");
 			HttpURLConnection connection = (HttpURLConnection) lll.openConnection();// 打开连接  
 			connection.setRequestMethod("GET");
 			connection.setRequestProperty("User-Agent", ua);
@@ -436,18 +423,14 @@ public class Util
 		}
 	}
 
-
-	private static Date BaseDateTime = new Date(0);
-
-
 	public static String gettextimg(byte[] data)
 	{
 		final String base = "@#&$%*o!;.";// 字符串由复杂到简单
 		BufferedImage image = null;
-		textimg timg = new textimg();
+		textImage timg = new textImage();
 		try
 		{
-			image = Util.byte_to_img(data);
+			image = Util.byteArrayToImage(data);
 		}
 		catch (IOException e)
 		{
@@ -462,23 +445,24 @@ public class Util
 				final int r = (pixel & 0xff0000) >> 16, g = (pixel & 0xff00) >> 8, b = pixel & 0xff;
 				final float gray = 0.299f * r + 0.578f * g + 0.114f * b;
 				final int index = Math.round(gray * (base.length() + 1) / 255);
-				t+=(index >= base.length() ? " " : String.valueOf(base.charAt(index)));
+				t += (index >= base.length() ? " " : String.valueOf(base.charAt(index)));
 			}
-			timg.addline(t);
+			timg.addLine(t);
 		}
-		return timg.getresultString();
+		return timg.getResultString();
 	}
 
 
 	public static boolean isvalidimg(byte[] data)
 	{
-		if(data.length%700==0){
+		if (data.length % 700 == 0)
+		{
 			return false;
 		}
 		BufferedImage image = null;
 		try
 		{
-			image = Util.byte_to_img(data);
+			image = Util.byteArrayToImage(data);
 		}
 		catch (IOException e)
 		{
@@ -494,7 +478,7 @@ public class Util
 		BufferedImage image = null;
 		try
 		{
-			image = Util.byte_to_img(data);
+			image = Util.byteArrayToImage(data);
 		}
 		catch (IOException e)
 		{
@@ -529,7 +513,6 @@ public class Util
 			try
 			{
 				FileOutputStream fos = new FileOutputStream(file);
-
 				fos.write(data, 0, data.length);   
 				fos.flush();   
 				fos.close();   
@@ -538,16 +521,15 @@ public class Util
 			{}   
 		}   
 	}
-	public static BufferedImage byte_to_img(byte[] data) throws IOException
+	
+	public static BufferedImage byteArrayToImage(byte[] data) throws IOException
 	{
 		InputStream stream = new ByteArrayInputStream(data);
-
 		return ImageIO.read(stream);
-
 	}
 
 
-	public static String read_property(String key)
+	public static String readRecord(String key)
 	{
 		File property_file = new File(Util.get_root_path() + "/config/record.conf");
 		Properties properties = new Properties();
@@ -572,7 +554,7 @@ public class Util
 		return properties.getProperty(key);
 
 	}
-	public static String read_config(String key)
+	public static String readConfig(String key)
 	{
 		File property_file = new File(Util.get_root_path() + "/config/settings.conf");
 		Properties properties = new Properties();
@@ -598,7 +580,7 @@ public class Util
 
 	}
 
-	public static String read_pluginconfig(String key)
+	public static String readPluginConfig(String key)
 	{
 		File property_file = new File(Util.get_root_path() + "/config/plugin.conf");
 		Properties properties = new Properties();
@@ -625,7 +607,7 @@ public class Util
 	}
 
 
-	public static void write_property(String key, String value)
+	public static void writeRecord(String key, String value)
 	{
 		File property_file = new File(Util.get_root_path() + "/config/record.conf");
 		Properties properties = new Properties();
@@ -652,7 +634,7 @@ public class Util
 
 	}
 
-	public static void write_config(String key, String value)
+	public static void writeConfig(String key, String value)
 	{
 		File property_file = new File(Util.get_root_path() + "/config/settings.conf");
 		Properties properties = new Properties();
@@ -724,13 +706,8 @@ public class Util
 
 
 
+
 	
-	synchronized public static void log(String string)
-	{
-		SimpleDateFormat format0 = new SimpleDateFormat("[HH:mm:ss]");
-        String log = format0.format(new Date().getTime());
-		
-	}
 
 	public static byte[] reverse_byte(byte[] data)
 	{
@@ -845,11 +822,11 @@ public class Util
 	}
 
 
-	public static PictureStore uploadimg(PictureKeyStore keystore, QQUser user, int pictureid)
+	public static PictureStore uploadImage(PictureKeyStore keystore, QQUser user, int pictureid)
 	{
 		PictureStore store = null;
 
-		for (PictureStore onestore: user.imgs)
+		for (PictureStore onestore: user.imageStoreCache)
 		{
 
 
@@ -857,22 +834,19 @@ public class Util
 			{
 
 				store = onestore;
-				user.imgs.remove(onestore);
+				user.imageStoreCache.remove(onestore);
 
 				break;
 			}
 
 		}
-
-
 		String file = store.fileName;
 	    URL u = null;
         HttpURLConnection con = null;
-        InputStream inputStream = null;
         //尝试发送请求
         try
 		{
-			u = new URL("http://" + Util.http_dns(Util.read_config("upload_img_address")) + "/cgi-bin/httpconn?htcmd=0x6ff0071&ver=5515&term=pc&ukey=" + Util.byte2HexString(keystore.ukey).replace(" ", "") + "&filesize=" + getfilelength(file) + "&range=0&uin=" + user.QQ + "&groupcode=" + store.groupUin);
+			u = new URL("http://" + Util.http_dns(Util.readConfig("upload_img_address")) + "/cgi-bin/httpconn?htcmd=0x6ff0071&ver=5515&term=pc&ukey=" + Util.byte2HexString(keystore.ukey).replace(" ", "") + "&filesize=" + getfilelength(file) + "&range=0&uin=" + user.uin + "&groupcode=" + store.groupUin);
 			con = (HttpURLConnection) u.openConnection();
             con.setRequestMethod("POST");
             con.setDoOutput(true);
@@ -898,11 +872,8 @@ public class Util
 
 			while ((line = reader.readLine()) != null)
 			{
-
 				System.out.println(line);
-
 			}
-
 
         }
 		catch (Exception e)
@@ -914,54 +885,13 @@ public class Util
 
 	}
 
-	public static String Length_toPB(String d)
-	{
-		String binary = Long.toString(GetQQNumRetUint(d), 2);
-		String temp = "";
-		while (!(binary).isEmpty())
-		{
-			temp = temp + binary.substring(binary.length() - 7, binary.length());
-			if (binary.length() >= 8)
-			{
-				binary = binary.substring(0, binary.length() - 8);
-			}
-			else
-			{
-				break;
-			}
-		}
 
-		return Long.toHexString(Long.parseLong(temp, 2));
-	}
 
 	public static long GetQQNumRetUint(String six)
 	{
 		return Long.parseLong(six.replace(" ", ""), 16);
 	}
 
-	public static String PB_toLength(long d)
-	{
-		String binary = Long.toString(d, 2); //转换length为二级制
-		String temp = "";
-		while (!(binary.isEmpty() || binary == null))
-		{
-			String binary1 = "0000000" + binary;
-			temp = temp + "1" + binary1.substring(binary1.length() - 7, binary1.length());
-			if (binary.length() >= 7)
-			{
-				binary = binary.substring(0, (binary.length() - 7));
-			}
-			else
-			{
-				//temp = temp + "0" + binary;
-				break;
-			}
-		}
-		String temp1 = temp.substring(temp.length() - 7, temp.length());
-		temp = temp.substring(0, temp.length() - 8) + "0" + temp1;
-
-		return Long.toHexString(Long.parseLong(temp, 2));
-	}
 
 	public static byte[] Bufferedimg_tobytes(BufferedImage img, String type)
 	{
@@ -1093,80 +1023,6 @@ public class Util
 		return Long.parseLong(gid);
 	}
 
-
-	public static void parseRichText(QQMessage qqmessage, byte[] rich_data)
-	{
-		ByteReader reader = new ByteReader(rich_data);
-
-		ByteReader reader2 = new ByteReader(new byte[1]);
-		try{
-			while (reader.hasMore())
-			{
-				int messageType = reader.readBytes(1)[0];
-
-				int messageLength = reader.readShort();
-
-				byte[] message = reader.readBytes(messageLength);
-
-				switch (messageType){
-					case 1:{//文本，艾特
-							reader2.update(message);
-							reader2.readBytes(1);
-							int textlength = reader2.readShort();
-							String text = reader2.readString(textlength);
-							if(text.startsWith("@")&&messageLength-textlength==19){
-								reader2.readBytes(10);
-								((GroupMessage)qqmessage).addAt(new AtStore().setAtName(text).setTargetUin(reader2.readInt()));
-							}else{
-								qqmessage.addText(text);
-							}
-						}break;
-					case 10:{//语音
-							reader2.update(message);
-							reader2.readBytes(1);
-							int textlength = reader2.readShort();
-							String text = reader2.readString(textlength);
-							qqmessage.addVoice(text);
-						}break;
-					case 3:{//图片
-							reader2.update(message);
-							reader2.readBytes(1);
-							int textlength = reader2.readShort();
-							String text = reader2.readString(textlength);
-							qqmessage.addImage(text);
-						}break;
-					case 24:{//文件
-							reader2.update(message);
-							reader2.readBytes(1);
-							int textlength = reader2.readShort();
-							String text = reader2.readString(textlength);
-							qqmessage.addFile(text);
-						}break;
-					case 20:{//xml
-							reader2.update(message);
-							reader2.readBytes(1);
-							reader2.update(reader2.readBytesByShortLength());
-							reader2.readBytes(1);
-							qqmessage.addXml(new String(ZLibUtils.decompress(reader2.readRestBytes())));
-						}break;
-					case 18:{//群名片
-							reader2.update(message);
-							reader2.readBytes(15);
-							((GroupMessage)qqmessage).senderName = reader2.readStringByShortLength();
-						}
-				}
-			}
-		}
-		finally{
-			reader.destroy();
-			reader2.destroy();
-		}
-
-
-	}
-	
-
-
 	public static String getHostIP()
 	{
 
@@ -1202,59 +1058,6 @@ public class Util
 		}
 		return hostIp;
 	}
-	public static long GetTimeSeconds(Date dateTime)
-	{
-		return (long) dateTime.getTime() - BaseDateTime.getTime() / 1000;
-	}
-
-
-	public static byte[] GetQdData(QQUser user)
-	{
-		byte[] data = new byte[]{};
-		data = Util.byteMerger(data, Util.IPStringToByteArray(user.TXProtocol.DwServerIP));
-		byte[] qddata = new byte[]{};
-		qddata = Util.byteMerger(qddata, user.TXProtocol.DwQdVerion_Byte);
-		qddata = Util.byteMerger(qddata, new byte[]{0x00,0x00,0x00,0x00});
-		qddata = Util.byteMerger(qddata, user.TXProtocol.DwPubNo);
-		qddata = Util.byteMerger(qddata, Util.subByte(Util.ToByte(user.QQ), 4, 4));
-		qddata = Util.byteMerger(qddata, Util.subByte(Util.ToByte(data.length), 2, 2));
-
-		data = new byte[]{};
-		data = Util.byteMerger(data, user.TXProtocol.QdPreFix);
-		data = Util.byteMerger(data, user.TXProtocol.CQdProtocolVer_Byte);
-		data = Util.byteMerger(data, user.TXProtocol.DwQdVerion_Byte);
-		data = Util.byteMerger(data, new byte[]{0x00});
-		data = Util.byteMerger(data, user.TXProtocol.WQdCsCmdNo_Byte);
-		data = Util.byteMerger(data, user.TXProtocol.CQdCcSubNo);
-		data = Util.byteMerger(data, Util.str_to_byte("0E88"));
-		data = Util.byteMerger(data, new byte[]{0x00,0x00,0x00,0x00});
-		data = Util.byteMerger(data, user.TXProtocol.BufComputerIdEx);
-		data = Util.byteMerger(data, user.TXProtocol.COsType);
-		data = Util.byteMerger(data, user.TXProtocol.BIsWow64);
-		data = Util.byteMerger(data, user.TXProtocol.DwPubNo);
-		data = Util.byteMerger(data, Util.subByte(user.TXProtocol.DwClientVer, 2, 2));
-		data = Util.byteMerger(data, new byte[]{0x00,0x00});
-		data = Util.byteMerger(data, user.TXProtocol.DwDrvVersionInfo);
-		data = Util.byteMerger(data, new byte[]{0x00,0x00,0x00,0x00});
-		data = Util.byteMerger(data, user.TXProtocol.BufVersionTsSafeEditDat);
-		data = Util.byteMerger(data, user.TXProtocol.BufVersionQScanEngineDll);
-		data = Util.byteMerger(data, new byte[]{0x00});
-		Crypter crypter = new Crypter();
-		data = Util.byteMerger(data, crypter.encrypt(qddata, user.TXProtocol.BufQdKey));
-		data = Util.byteMerger(data, user.TXProtocol.QdSufFix);
-
-		int size = data.length + 3;
-		qddata = new byte[]{};
-		qddata = Util.byteMerger(qddata, user.TXProtocol.QdPreFix);
-		qddata = Util.byteMerger(qddata, Util.subByte(Util.ToByte(size), 2, 6));
-		qddata = Util.byteMerger(qddata, new byte[]{0x00,0x00});
-		qddata = Util.byteMerger(qddata, Util.subByte(Util.ToByte(data.length), 2, 6));
-		qddata = Util.byteMerger(qddata, new byte[]{0x00,0x00});
-
-		user.TXProtocol.QdData = data;
-		return data;
-	}
-
 
 	public static byte[] random_byte(int size)
 	{
@@ -1264,20 +1067,8 @@ public class Util
 
 		return b;
 	}
-
-
-	public static short bytesToshort(byte[] input)
-	{
-		byte high = input[0];
-        byte low = input[1];
-        short z = (short)(((high & 0x00FF) << 8) | (0x00FF & low));
-        return z;
-
-
-		// TODO: Implement this metho
-	}
-
-	public static String GetIpStringFromBytes(byte[] input)
+	
+	public static String getIpStringFromBytes(byte[] input)
 	{
 		String u1 = String.valueOf((int)input[0] & 0xff);
 		String u2 = String.valueOf((int)input[1] & 0xff);
@@ -1286,73 +1077,7 @@ public class Util
 		return u1 + "." + u2 + "." + u3 + "." + u4;
 	}
 
-	public static long bytesToLong(byte[] input, int offset, boolean littleEndian)
-	{
-// 将byte[] 封装为 ByteBuffer
-
-		ByteBuffer buffer = ByteBuffer.wrap(Util.byteMerger(new byte[8 - input.length], input));   
-
-		if (littleEndian)
-		{            
-			// ByteBuffer.order(ByteOrder) 方法指定字节序,即大小端模式(BIG_ENDIAN/LITTLE_ENDIAN)
-			// ByteBuffer 默认为大端(BIG_ENDIAN)模式
-			buffer.order(ByteOrder.LITTLE_ENDIAN);
-		}
-
-		return buffer.getLong();
-	}
-
-	public static int GetInt(byte[] data, int offset, int length)
-	{
-        byte[] test = new byte[]{0x00,0x00,data[offset],data[offset + 1],0x00,0x00,0x00,0x00};
-		ByteBuffer u = ByteBuffer.wrap(test);
-
-		return u.getInt();
-	}
-
-	public static int GetInt(byte[] data)
-	{
-        byte[] test = new byte[]{0x00,0x00,data[0],data[1],0x00,0x00,0x00,0x00};
-
-		ByteBuffer u = ByteBuffer.wrap(test);
-
-		return u.getInt();
-	}
-
-	public static long GetLong(byte[] data)
-	{
-        byte[] test = new byte[]{0x00,0x00,0x00,0x00,data[0],data[1],data[2],data[3]};
-
-		ByteBuffer u = ByteBuffer.wrap(test);
-
-		return u.getLong();
-	}
-
-	public static short GetShort(byte[] data)
-	{
-        byte[] test = new byte[]{data[0],data[1],0x00,0x00,0x00,0x00,0x00,0x00};
-
-		ByteBuffer u = ByteBuffer.wrap(test);
-
-		return u.getShort();
-	}
-
-	public static Date GetDateTimeFromMillis(long timeMillis)
-	{
-		Date date = new Date(timeMillis);
-		return date;
-	}
-
-	public static byte[] GetBytes(String string)
-	{
-
-
-		// TODO: Implement this method
-		return string.getBytes();
-	}
-
-
-	public static String GET_GTK(String skey)
+	public static String getGTK(String skey)
 	{
 		String arg = "tencentQQVIP123443safde&!%^%1282";
 		List<Integer> list = new ArrayList<Integer>();
@@ -1374,6 +1099,7 @@ public class Util
 
 		return Md5(stringBuilder + arg);
 	}
+	
 	public static String Md5(String text)
 	{
 
@@ -1409,6 +1135,7 @@ public class Util
 		{}
 		return null;
 	}
+
 	public static byte[] MD5(byte[] arg)
 	{
 		try
@@ -1423,7 +1150,8 @@ public class Util
 		{}
 		return null;
 	}
-	public static String GetBkn(String skey)
+
+	public static String getBkn(String skey)
 	{
 		int hash = 5381;
 
@@ -1436,56 +1164,8 @@ public class Util
 		return String.valueOf(gtkOrbkn);
 	}
 
-	public static String ToHex(byte[] data, String p1, String p2)
-	{
-		String hex= "";
-        if (data != null)
-		{
-            for (Byte b : data)
-			{
-                hex += String.format("%02X", b.intValue() & 0xFF);
-            }
-        }
-        return hex;
-	}
 
-
-	public static String NumToHexString(int qq, int Length)
-	{
-
-		String text = String.valueOf(qq);
-		if (text.length() == Length)
-		{
-			return text;
-		}
-
-		if (text.length() > Length)
-		{
-			return null;
-		}
-		return null;
-	}
-
-	public static byte[] byteMerger(List<byte[]> bytes)
-	{
-		int total_length = 0;
-		int offset= 0;
-		for (byte[]  one : bytes)
-		{
-			total_length = total_length + one.length;
-		}
-		byte[] byte_3 = new byte[total_length];
-
-		for (byte[] one_byte : bytes)
-		{
-			System.arraycopy(one_byte, 0, byte_3, offset, one_byte.length); 
-            offset = offset + one_byte.length;
-		}
-		return byte_3;
-	}
-
-
-	public static byte[] IPStringToByteArray(String ip)
+	public static byte[] iPStringToByteArray(String ip)
 	{
 		byte[] array = new byte[4];
 		String[] array2 = ip.split("[.]");
@@ -1499,7 +1179,6 @@ public class Util
 
 		return array;
 	}
-
 
 
 	public static byte[] RandomKey()
@@ -1526,35 +1205,8 @@ public class Util
         return byteArrayOutputStream.toByteArray();
     }
 
-	public static byte[] byteMerger(byte[] byte_1, byte[] byte_2)
-	{  
-        byte[] byte_3 = new byte[byte_1.length + byte_2.length];  
-        System.arraycopy(byte_1, 0, byte_3, 0, byte_1.length);  
-        System.arraycopy(byte_2, 0, byte_3, byte_1.length, byte_2.length);  
-        return byte_3;  
-    }
 
-	public static byte[] ToByte(long x)
-	{  
-		ByteBuffer buffer = ByteBuffer.allocate(8);
 
-		buffer.putLong(x);
-		return  buffer.array();  
-	}
-	public static byte[] ToByte(int x)
-	{  
-        ByteBuffer buffer = ByteBuffer.allocate(8);
-
-		buffer.putInt(x);
-		return  buffer.array();  
-    }
-	public static byte[] ToByte(short x)
-	{  
-        ByteBuffer buffer = ByteBuffer.allocate(8);
-
-		buffer.putShort(x);
-		return  buffer.array();  
-    }
 	public static String byte2HexString(byte[] bytes)
 	{
         String hex= "";
@@ -1569,19 +1221,7 @@ public class Util
 
     }
 
-	public static byte[] subByte(byte[] b, int off, int length)
-	{
 
-		if (b.length != 0 && b != null)
-		{
-			byte[] b1 = new byte[length];
-			System.arraycopy(b, off, b1, 0, length);
-			return b1;
-		}
-		return new byte[1];
-
-
-	}
 
 	public static HostnameVerifier hv = new HostnameVerifier() {
         public boolean verify(String urlHostName, SSLSession session)

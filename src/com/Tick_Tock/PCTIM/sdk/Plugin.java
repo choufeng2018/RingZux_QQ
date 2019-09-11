@@ -1,4 +1,4 @@
-package com.Tick_Tock.PCTIM.sdk;
+package com.Tick_Tock.PCTIM.Sdk;
 
 import com.Tick_Tock.PCTIM.Message.*;
 
@@ -6,7 +6,6 @@ import com.Tick_Tock.PCTIM.Message.*;
 	    String author();
 		String version();
 		String name();
-		
 		void onLoad(API api);
 		void onMessageHandler(QQMessage message);
 	}

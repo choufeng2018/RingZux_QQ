@@ -1,19 +1,19 @@
-package com.Tick_Tock.PCTIM.sdk;
+package com.Tick_Tock.PCTIM.Sdk;
 import com.Tick_Tock.PCTIM.Message.*;
 
 
 public interface API {
-	public void SendGroupMessage(String text,long groupUin);
+	public void sendGroupMessage(String text,long groupUin);
 	
-	public void SendGroupImage(String text,long groupUin);
+	public void sendGroupImage(String text,long groupUin);
 	
-	public void SendGroupXml(String text,long groupUin);
+	public void sendGroupXml(String text,long groupUin);
 	
-	public void SendFriendMessage(String text,long groupUin);
+	public void sendFriendMessage(String text,long groupUin);
 	
-	public void SendFriendXml(String text,long groupUin);
+	public void sendFriendXml(String text,long groupUin);
 	
-	public Group_List getgrouplist();
+	public GroupList getGroupList();
 	
-	public Friend_List getfriendlist();
+	public FriendList getFriendList();
 }
