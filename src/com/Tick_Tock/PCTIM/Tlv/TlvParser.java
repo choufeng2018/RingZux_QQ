@@ -7,35 +7,61 @@ import com.Tick_Tock.PCTIM.Utils.*;
 
 public class TlvParser
 {
-
-
-	public static void parsetvl(Tlv tlv, QQUser user)
+	public static void parseTlv(Tlv tlv, QQUser user)
 	{
 
-		int tlvtype = tlv.tag;
-		if (tlvtype == 274)
+		int tlvType = tlv.tag;
+		if(tlvType==9){//0819密匙
+			ByteReader bytefactory = new ByteReader(tlv.value);
+			bytefactory.readBytes(2);
+			user.packet0819Key = bytefactory.readRestBytesAndDestroy();
+		}
+		else if(tlvType==4){//qq号
+			ByteReader bytefactory = new ByteReader(tlv.value);
+			bytefactory.readBytes(2);
+			user.uin = Long.parseLong(bytefactory.readStringByShortLengthAndDestroy());
+		}
+		else if(tlvType == 48){
+			ByteReader bytefactory = new ByteReader(tlv.value);
+			user.packet0819Token = bytefactory.readBytesByShortLengthAndDestroy();
+		}
+		else if(tlvType == 769){
+			ByteReader bytefactory = new ByteReader(tlv.value);
+			user.packet0819ImageId = bytefactory.readBytesByShortLengthAndDestroy();
+		}
+		else if(tlvType == 770){
+			ByteReader bytefactory = new ByteReader(tlv.value);
+			user.packet0819Qrcode = bytefactory.readBytesByShortLengthAndDestroy();
+		}
+		else if(tlvType == 771){
+			ByteReader bytefactory = new ByteReader(tlv.value);
+			user.token771 = bytefactory.readBytesByShortLengthAndDestroy();
+		}
+		else if(tlvType == 772){
+			user.txprotocol.tgtgtKey = tlv.value;//妈的个逼
+		}
+		else if (tlvType == 274)
 		{
 			user.txprotocol.sigClientAddress = tlv.value;
 		}
-		else if (tlvtype == 23)
+		else if (tlvType == 23)
 		{
 			ByteReader bytefactory = new ByteReader(tlv.value);
 			bytefactory.readBytes(1);
 			byte[] WSubVer = bytefactory.readBytes(1);
 			if (WSubVer[0] == 1)
             {
-				
 				long timeMillis = bytefactory.readUnsignedInt();
                 user.txprotocol.serverTime = (int) timeMillis;
                 user.txprotocol.clientAdrres = Util.getIpStringFromBytes(bytefactory.readBytes(4));
                 user.txprotocol.clientPort = (short) bytefactory.readShortAndDestroy();
 			}
 		}
-		else if (tlvtype == 784)
+		else if (tlvType == 784)
 		{
 			user.txprotocol.serverAddres = Util.getIpStringFromBytes(tlv.value);
 		}
-		else if (tlvtype == 12)
+		else if (tlvType == 12)
 		{
 			ByteReader bytefactory = new ByteReader(tlv.value);
 			bytefactory.readBytes(1);
@@ -58,15 +84,15 @@ public class TlvParser
 			}
 
 		}
-		else if (tlvtype == 30)
+		else if (tlvType == 30)
 		{
 			user.txprotocol.tgtgtKey = tlv.value;
 		}
-		else if (tlvtype == 6)
+		else if (tlvType == 6)
 		{
 			user.txprotocol.tgtgt = tlv.value;
 		}
-		else if (tlvtype == 272)
+		else if (tlvType == 272)
 		{
 			ByteReader reader = new ByteReader(tlv.value);
 			if (reader.readShort() != 1)
@@ -78,11 +104,11 @@ public class TlvParser
 				user.txprotocol.sigImage = reader.readRestBytesAndDestroy();
 			}
 		}
-		else if (tlvtype == 277)
+		else if (tlvType == 277)
 		{
 			byte[] bufPacketMD5 = tlv.value;
 		}
-		else if (tlvtype == 265)
+		else if (tlvType == 265)
 		{
 			ByteReader bytefactory = new ByteReader(tlv.value);
 			bytefactory.readBytes(1);
@@ -100,7 +126,7 @@ public class TlvParser
 				System.out.println("未知版本类型 265");
 			}
 		}
-		else if (tlvtype == 259)
+		else if (tlvType == 259)
 		{
 			ByteReader bytefactory = new ByteReader(tlv.value);
 			bytefactory.readBytes(1);
@@ -115,7 +141,7 @@ public class TlvParser
 				System.out.println("未知版本类型 259");
 			}
 		}
-		else if (tlvtype == 263)
+		else if (tlvType == 263)
 		{
 			ByteReader bytefactory = new ByteReader(tlv.value);
 			bytefactory.readBytes(1);
@@ -141,7 +167,7 @@ public class TlvParser
 			}
 
 		}
-		else if (tlvtype == 264)
+		else if (tlvType == 264)
 		{
 			ByteReader bytefactory = new ByteReader(tlv.value);
 			bytefactory.readBytes(1);
@@ -166,22 +192,22 @@ public class TlvParser
 			}
 
 		}
-		else if (tlvtype == 13)
+		else if (tlvType == 13)
 		{
 			
 		}
-		else if (tlvtype == 31)
+		else if (tlvType == 31)
 		{
 			ByteReader bytefactory = new ByteReader(tlv.value);
 			bytefactory.readBytes(1);
 			byte[] WSubVer = bytefactory.readBytes(1);
 			user.txprotocol.deviceId = bytefactory.readRestBytesAndDestroy();
 		}
-		else if (tlvtype == 20)
+		else if (tlvType == 20)
 		{
 			
 		}
-		else if (tlvtype == 268)
+		else if (tlvType == 268)
 		{
 			ByteReader bytefactory = new ByteReader(tlv.value);
 			bytefactory.readBytes(1);
@@ -202,7 +228,7 @@ public class TlvParser
             }
 
 		}
-		else if (tlvtype == 270)
+		else if (tlvType == 270)
 		{
 			ByteReader bytefactory = new ByteReader(tlv.value);
 			bytefactory.readBytes(1);
@@ -222,20 +248,20 @@ public class TlvParser
                 System.out.println("未知版本类型 270");
             }
 		}
-		else if (tlvtype == 47)
+		else if (tlvType == 47)
 		{
 			
 		}
-		else if (tlvtype == 269)
+		else if (tlvType == 269)
 		{
 			
 		}
-		else if (tlvtype == 261)
+		else if (tlvType == 261)
 		{
 			
 
 		}
-		else if (tlvtype == 256)
+		else if (tlvType == 256)
 		{
 			System.out.println(Util.byte2HexString(tlv.value));
 
@@ -243,7 +269,7 @@ public class TlvParser
 		}
 
 
-		else if (tlvtype == 260)
+		else if (tlvType == 260)
 		{
 			ByteReader factory = new ByteReader(tlv.value);
 
@@ -313,7 +339,8 @@ public class TlvParser
 		else
 		{
 
-			System.out.println("未知tlv解析:" + tlv.tag);
+			System.out.println("未知tlv解析:" + tlv.tag + " : " +Util.byte2HexString(tlv.value));
+			
 		}
 	}
 }

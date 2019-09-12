@@ -16,6 +16,79 @@ public class SendPackage
 	
 	public static byte[] markStart = {0x02};
 	
+	public static byte[] get0819(QQUser user)
+	{
+		System.out.println("[发送包] 命令: 08 19");
+		ByteBuilder builder = new ByteBuilder();
+		builder.writeBytes(markStart);
+		builder.writeBytes(user.txprotocol.clientVersion1);
+		builder.writeBytes(user.txprotocol.clientVersion2);
+		builder.writeBytes(Util.str_to_byte("08 19"));
+		builder.writeShort(GetNextSeq());
+		builder.writeInt(0);
+		builder.writeBytes(user.txprotocol.fix1);
+		builder.writeBytes(user.txprotocol.clientType);
+		builder.writeBytes(user.txprotocol.fuckMe1);
+		builder.writeBytes(user.txprotocol.fix2);
+		builder.writeShort(48);
+		builder.writeShort(58);
+		builder.writeShort(56);
+		builder.writeBytes(user.packet0819Token);
+		ByteBuilder tlv_builder = new ByteBuilder() ;
+		tlv_builder.writeBytes(TlvBuiler.tlv0019(user));
+		tlv_builder.writeBytes(TlvBuiler.tlv0301(user));
+		byte[] tlv_data = tlv_builder.getDataAndDestroy();
+		TeaCryptor crypter = new TeaCryptor();
+		byte[] result = crypter.encrypt(tlv_data,user.packet0819Key);
+		builder.writeBytes(result);
+		builder.writeBytes(markEnd);
+		builder.rewriteShort(builder.totalcount()+2);
+		return builder.getDataAndDestroy();
+	}
+	
+	
+	/*
+	 byte[] arrayOfByte = com.pansy.robot.の.で.が(16);
+	 で localで = new で();
+	 localで.が(new byte[] { 0, 25, 0, 16, 0, 1 }).が(で.る);  00 01 00 00 04 56 00 00 00 01 00 00 15 EB 00 00 
+	 localで.が(new byte[] { 0, 0, 1, 20, 0, 29, 1, 3, 0, 25 }).が(APP.よ().pub_key);
+	 localで.が(new byte[] { 3, 5, 0, 30, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 72, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0, 21, 0, 48, 0, 1, 1 });
+	 localで.ま(4).が(new byte[] { 0, 16 }).ま(4);
+	 localで.が(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2 }).ま(4);
+	 localで.が(new byte[] { 0, 16 }).ま(16);
+	 return new で().が().ま().が(new byte[] { 8, 24 }).ま(2).が(4).が(で.よ).が(arrayOfByte).が(new com.pansy.robot.crypter.で().ま(localで.う(), arrayOfByte)).る().う();
+	*/
+	public static byte[] get0818(QQUser user)
+	{
+		System.out.println("[发送包] 命令: 08 18");
+		ByteBuilder builder = new ByteBuilder();
+		builder.writeBytes(markStart);
+		builder.writeBytes(user.txprotocol.clientVersion1);
+		builder.writeBytes(user.txprotocol.clientVersion2);
+		builder.writeBytes(Util.str_to_byte("08 18"));
+		builder.writeShort(GetNextSeq());
+		builder.writeInt(0);
+		builder.writeBytes(user.txprotocol.fix1);
+		builder.writeBytes(user.txprotocol.clientType);
+		builder.writeBytes(user.txprotocol.fuckMe1);
+		builder.writeBytes(user.txprotocol.fix2);
+		builder.writeBytes(user.packet0818Key);
+		ByteBuilder tlv_builder = new ByteBuilder() ;
+		tlv_builder.writeBytes(TlvBuiler.tlv0019(user));
+		tlv_builder.writeBytes(TlvBuiler.tlv0114(user));
+		tlv_builder.writeBytes(TlvBuiler.tlv0305(user));
+		tlv_builder.writeBytes(TlvBuiler.tlv0015(user));
+		byte[] tlv_data = tlv_builder.getDataAndDestroy();
+		TeaCryptor crypter = new TeaCryptor();
+		byte[] result = crypter.encrypt(tlv_data,user.packet0818Key);
+		builder.writeBytes(result);
+		builder.writeBytes(markEnd);
+		builder.rewriteShort(builder.totalcount()+2);
+		return builder.getDataAndDestroy();
+	}
+	
+	
+	
 	public static byte[] get001d(QQUser user)
 	{
 		System.out.println("[发送包] 命令: 00 1D");
@@ -132,6 +205,59 @@ public class SendPackage
 		builder.writeBytes(markEnd);
 		builder.rewriteShort(builder.totalcount()+2);///////*****
 		//System.out.println(Util.byte2HexString(builder.getdata()));
+		return builder.getDataAndDestroy();
+	}
+	
+	
+	public static byte[] get0836Qrcode(QQUser user){
+		System.out.println("[发送包] 命令: 08 36");
+		ByteBuilder builder = new ByteBuilder();
+
+		byte[] tlv0110 = null;
+		byte[] tlv0032 = null;
+		builder.writeBytes(markStart);
+		builder.writeBytes(user.txprotocol.clientVersion1);
+		builder.writeBytes(user.txprotocol.clientVersion2);
+		builder.writeBytes(new byte[]{0x08,0x36});
+		builder.writeShort(GetNextSeq());
+		builder.writeInt(user.uin);
+		builder.writeBytes(user.txprotocol.fix1);
+		builder.writeBytes(user.txprotocol.clientType);
+		builder.writeBytes(user.txprotocol.fuckMe1);
+		builder.writeBytes(user.txprotocol.fix2);
+
+		builder.writeBytes(user.txprotocol.ecdhProtocolVersion);
+		builder.writeBytes(user.txprotocol.ecdhAlgorithmVersion);
+		builder.writeBytesByShortLength(user.txprotocol.ecdhPublicKey);
+		builder.writeBytes(new byte[] { 0x00, 0x00, 0x00, 0x10 });
+		builder.writeBytes(user.packet0836Key1);
+
+		ByteBuilder  tlv_builder = new ByteBuilder();
+		tlv_builder.writeBytes(TlvBuiler.tlv0112(user));
+		tlv_builder.writeBytes(TlvBuiler.tlv030f(user));
+		tlv_builder.writeBytes(TlvBuiler.tlv0005(user));
+		tlv_builder.writeBytes(TlvBuiler.tlv0303(user));
+		byte[] tlv0015 = TlvBuiler.tlv0015(user);
+		tlv_builder.writeBytes(tlv0015);
+		tlv_builder.writeBytes(TlvBuiler.tlv001a(tlv0015,user));
+		tlv_builder.writeBytes(TlvBuiler.tlv0018(user));
+		tlv_builder.writeBytes(TlvBuiler.tlv0103(user));
+		
+		tlv_builder.writeBytes(TlvBuiler.tlv0312());
+		tlv_builder.writeBytes(TlvBuiler.tlv0508());
+		tlv_builder.writeBytes(TlvBuiler.tlv0313(user));
+		tlv_builder.writeBytes(TlvBuiler.tlv0102(user));
+
+		//tlv_builder.writebytes(crckey);
+		//tlv_builder.writebytes(crccode);
+		byte[] tlv_data = tlv_builder.getDataAndDestroy();
+		//System.out.println(Util.byte2HexString(tlv_data));
+		TeaCryptor crypter = new TeaCryptor();
+		byte[] result = crypter.encrypt(tlv_data,user.txprotocol.ecdhShareKey);
+		builder.writeBytes(result);
+
+		builder.writeBytes(markEnd);
+		builder.rewriteShort(builder.totalcount()+2);
 		return builder.getDataAndDestroy();
 	}
 

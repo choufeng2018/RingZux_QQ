@@ -5,6 +5,47 @@ import com.Tick_Tock.PCTIM.*;
 
 public class TlvBuiler
 {
+
+	public static byte[] tlv0303(QQUser user)
+	{
+		ByteBuilder builder = new ByteBuilder();
+		builder.writeBytesByShortLength(user.token771);
+		builder.rewriteShort(builder.totalcount()); //长度
+		builder.rewriteBytes(new byte[]{0x03,0x03});//头部
+		return builder.getDataAndDestroy();
+	}
+	
+	public static byte[] tlv0301(QQUser user)
+	{
+		ByteBuilder builder = new ByteBuilder();
+		builder.writeBytesByShortLength(user.packet0819ImageId);
+		builder.rewriteShort(builder.totalcount()); //长度
+		builder.rewriteBytes(new byte[]{0x03,0x01});//头部
+
+		return builder.getDataAndDestroy();
+	}
+
+	public static byte[] tlv0305(QQUser user)
+	{
+		ByteBuilder builder = new ByteBuilder();
+
+		builder.writeBytes(new byte[]{0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x05,0x00,0x00,0x00,0x04,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x48,0x00,0x00,0x00,0x02,0x00,0x00,0x00,0x02,0x00,0x00});
+		builder.rewriteShort(builder.totalcount()); //长度
+		builder.rewriteBytes(new byte[]{0x03,0x05});//头部
+
+		return builder.getDataAndDestroy();
+	}
+
+	public static byte[] tlv0019(QQUser user)
+	{
+		ByteBuilder builder = new ByteBuilder();
+
+		builder.writeBytes(new byte[]{0x00,0x01,0x00,0x00,0x04,0x56,0x00,0x00,0x00,0x01,0x00,0x00,0x15,(byte)0xEB,0x00,0x00});
+		builder.rewriteShort(builder.totalcount()); //长度
+		builder.rewriteBytes(new byte[]{0x00,0x19});//头部
+
+		return builder.getDataAndDestroy();
+	}
 	public static byte[] tlv0018(QQUser user){
 		ByteBuilder builder = new ByteBuilder();
 	    byte[] WSubVer ={0x00,0x01};
@@ -72,7 +113,6 @@ public class TlvBuiler
 	public static byte[] tlv0112(QQUser user){
 	    
 		ByteBuilder builder = new ByteBuilder();
-		
 		builder.writeBytes(user.txprotocol.sigClientAddress);
 		builder.rewriteShort(builder.totalcount()); //长度
 		builder.rewriteBytes(new byte[]{0x01,0x12});//头部
@@ -284,11 +324,10 @@ public class TlvBuiler
 		builder.writeBytes(new byte[]{0x00,0x00});
 		builder.writeBytes(user.txprotocol.idc);
 		builder.writeBytes(user.txprotocol.isp);
-		if (user.txprotocol.serverAddres == null){
+		if (user.txprotocol.serverAddres != null){
 		    builder.writeBytes(Util.iPStringToByteArray(user.txprotocol.serverAddres));
 		}else{
 			builder.writeBytes(Util.iPStringToByteArray(user.txprotocol.redirectedAddress));
-			
 		}
 		builder.writeInt(user.txprotocol.serverPort);
 		builder.writeBytes(new byte[]{0x00,0x00});
@@ -318,9 +357,9 @@ public class TlvBuiler
 		builder.writeBytes(WSubVer);
 		builder.writeBytes(user.txprotocol.fix3);
 		builder.writeBytes(new byte[]{0x02,0x00,0x14,0x01,0x01,0x00,0x10});
-		builder.writeBytes(Util.RandomKey());
+		builder.writeBytes(Util.randomKey());
 		builder.writeBytes(new byte[]{0x00,0x14,0x01,0x02,0x00,0x10});
-		builder.writeBytes(Util.RandomKey());
+		builder.writeBytes(Util.randomKey());
 		builder.rewriteShort(builder.totalcount()); //长度
 		builder.rewriteBytes(new byte[]{0x01,0x05});//头部
 

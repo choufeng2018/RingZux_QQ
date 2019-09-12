@@ -52,15 +52,17 @@ public class RingzuxHandler extends ChannelInboundHandlerAdapter
 			byte[] passwordmd5=new byte[0];
 			Scanner sc;
 			String account;
-			String passwd;
+			String passwd = "";
 			if (qq == null || password == null)
 			{
 				sc = new Scanner(System.in); 
-				System.out.println("请输入qq账号");
+				System.out.println("请输入qq账号，需要扫码登录请输入0");
 				account = sc.nextLine();
-				sc = new Scanner(System.in); 
-				System.out.println("请输入qq密码");
-				passwd = sc.nextLine();
+				if(!account.equals("0")){
+					sc = new Scanner(System.in); 
+					System.out.println("请输入qq密码");
+					passwd = sc.nextLine();
+				}
 				this.user = new QQUser(Long.parseLong(account), Util.MD5(passwd));
 			}
 			else
@@ -69,7 +71,8 @@ public class RingzuxHandler extends ChannelInboundHandlerAdapter
 				this.user = new QQUser(Long.parseLong(qq), passwordmd5);
 			}
 		}
-		user.txprotocol.serverAddres = ((InetSocketAddress)ctx.channel().remoteAddress()).getHostString();
+		user.txprotocol.serverAddres = ((InetSocketAddress)ctx.channel().remoteAddress()).getAddress().getHostAddress();
+		//System.out.println(user.txprotocol.serverAddres);
 		user.txprotocol.serverPort = (short) ((InetSocketAddress)ctx.channel().remoteAddress()).getPort();
 		//System.out.println(user.TXProtocol.DwServerIP);
 
@@ -117,6 +120,51 @@ public class RingzuxHandler extends ChannelInboundHandlerAdapter
 			TeaCryptor crypter = new TeaCryptor();
 			switch (command.replace(" ", ""))
 			{
+				case "0819":{
+						byte[] body_decrypted = crypter.decrypt(body_encrypted, user.packet0819Key);
+						//System.out.println(Util.byte2HexString(body_decrypted));
+						reader.update(body_decrypted);
+						byte header = reader.readBytes(1)[0];
+						if (header == 2)
+						{//并未完成扫码
+						    Thread.sleep(1000);//短暂休眠后继续发0819
+							byte[] data = SendPackage.get0819(this.user);
+							//System.out.println(Util.byte2HexString(data));
+							this.send(data);
+						}
+						else if (header == 1)
+						{//扫码中等待确认
+							Thread.sleep(1000);
+							byte[] data = SendPackage.get0819(this.user);
+							//System.out.println(Util.byte2HexString(data));
+							this.send(data);
+						}
+						else if (header == 0)
+						{//已完成扫码
+							this.parseTlv(reader.readRestBytes(), user);
+							user.txprotocol.pingType=4;
+							byte[] data = SendPackage.get0825(this.user);
+							this.send(data);
+						}
+					}break;
+				case "0818":{
+						byte[] body_decrypted = crypter.decrypt(body_encrypted, user.txprotocol.ecdhShareKey);
+						//System.out.println(Util.byte2HexString(body_decrypted));
+						reader.update(body_decrypted);
+						byte header = reader.readBytes(1)[0];
+						this.parseTlv(reader.readRestBytes(), user);
+						if (header == 0)
+						{
+							Util.displayQrcode(user.packet0819Qrcode);
+							byte[] data = SendPackage.get0819(this.user);
+							//System.out.println(Util.byte2HexString(data));
+							this.send(data);
+						}
+						else
+						{
+							System.out.println("未知返回: " + header);
+						}
+					}break;
 				case "0825":{
 						byte[] body_decrypted = crypter.decrypt(body_encrypted, user.packet0825Key);
 						reader.update(body_decrypted);
@@ -134,62 +182,42 @@ public class RingzuxHandler extends ChannelInboundHandlerAdapter
 						}
 						else
 						{
-							System.out.println("服务器连接成功,开始登陆");
-							byte[] data = SendPackage.get0836(this.user, false);
-							this.send(data);
+							if (user.uin == 0)
+							{
+								System.out.println("服务器连接成功,开始获取二维码");
+								byte[] data = SendPackage.get0818(this.user);
+								//System.out.println(Util.byte2HexString(data));
+								this.send(data);
+							}
+							else
+							{
+								if (user.packet0819Qrcode != null)
+								{
+									System.out.println("服务器连接成功,开始登陆");
+									byte[] data = SendPackage.get0836Qrcode(this.user);
+									this.send(data);
+								}
+								else
+								{
+									System.out.println("服务器连接成功,开始登陆");
+									byte[] data = SendPackage.get0836(this.user, false);
+									this.send(data);
+								}
+							}
 						}
 					}break;
 				case "0836":{
 						byte[] body_decrypted = crypter.decrypt(body_encrypted, this.user.txprotocol.ecdhShareKey);
 						//System.out.println(Util.byte2HexString(body_decrypted));
 						reader.update(body_decrypted);
-						reader.readBytes(1);
-						int header = reader.readBytes(1)[0];
-						byte[] server_publickey = reader.readBytesByShortLength();
-						byte[] server_sharekey = user.ecdh.consult(server_publickey);
-						body_decrypted = crypter.decrypt(reader.readRestBytes(), server_sharekey);
-						//System.out.println(Util.byte2HexString(body_decrypted));
-						if (header == -5 || header == 0 || header == 1 || header == 51 ||
-							header == 52 || header == 63 || header == 248 ||
-							header == 249 || header == 250 || header == 251 ||
-							header == 254 || header == 15 || header == 255)
-						{
-							byte[] h = reader.readRestBytes();
-							//System.out.println(Util.byte2HexString(h));
-							this.parseTlv(h, user);
+						if(reader.readByte()==1){
+							reader.readByte();
+							byte[] server_publickey = reader.readBytesByShortLength();
+							byte[] server_sharekey = user.ecdh.consult(server_publickey);
+							body_decrypted = crypter.decrypt(reader.readRestBytes(), server_sharekey);
 						}
-						else
-						{
-							//System.out.println(Util.byte2HexString(body_decrypted));
-							body_decrypted = crypter.decrypt(body_decrypted, user.txprotocol.tgtgtKey);
-							reader.update(body_decrypted);
-							header = reader.readBytes(1)[0];
-							this.parseTlv(reader.readRestBytes(), user);
-						}
-						if (header == 52)
-						{
-							System.out.println("密码错误");
-							System.exit(100);
-						}
-						else if (header == -5)
-						{
-							byte[] data = SendPackage.get00ba(this.user, "");
-							this.send(data);
-						}
-						else if (header == 0)
-						{
-							System.out.println("成功获取用户信息: Nick: " + this.user.nickName + " Age: " + this.user.age + " Sex: " + this.user.sex);
-							this.user.isLogined = true;
-							this.user.loginTime = new Date().getTime();
-							byte[] data = SendPackage.get0828(this.user);
-							this.send(data);
-						}
-						else
-						{
-							byte[] data = SendPackage.get0836(this.user, true);
-							this.send(data);
-						}
-
+						this.parse0836(body_decrypted);
+						
 					}break;
 				case "0828":{
 						byte[] body_decrypted = crypter.decrypt(body_encrypted, user.txprotocol.tgtGtKey);
@@ -200,8 +228,10 @@ public class RingzuxHandler extends ChannelInboundHandlerAdapter
 						this.send(data);
 						this.startHeatBeat();
 						this.robot = new QQRobot(this, user);
-						Util.writeRecord("account", String.valueOf(this.user.uin));
-						Util.writeRecord("password", Util.byte2HexString(this.user.md51));
+						if(user.packet0819Qrcode==null){
+						    Util.writeRecord("account", String.valueOf(this.user.uin));
+						    Util.writeRecord("password", Util.byte2HexString(this.user.md51));
+						}
 					}break;
 				case "00EC":{
 						byte[] data = SendPackage.get001d(this.user);
@@ -304,7 +334,6 @@ public class RingzuxHandler extends ChannelInboundHandlerAdapter
 						if (VerifyType == 0x13)
 						{
 							byte[] VerifyCode = reader.readBytesByShortLength();
-
 							byte VerifyCommand = reader.readBytes(1)[0];
 							if (VerifyCommand == 0x00)
 							{
@@ -451,6 +480,53 @@ public class RingzuxHandler extends ChannelInboundHandlerAdapter
 		}
 	}
 
+	private void parse0836(byte[] body_decrypted)
+	{
+		//System.out.println(Util.byte2HexString(body_decrypted));
+		ByteReader reader = new ByteReader(body_decrypted);
+		byte header = reader.readByte();
+		if (header == -5 || header == 0 || header == 1 || header == 51 ||
+			header == 52 || header == 63 || header == 248 ||
+			header == 249 || header == 250 || header == 251 ||
+			header == 254 || header == 15 || header == 255)
+		{
+			byte[] h = reader.readRestBytesAndDestroy();
+			//System.out.println(Util.byte2HexString(h));
+			this.parseTlv(h, user);
+		}
+		else
+		{
+			//System.out.println(Util.byte2HexString(body_decrypted));
+			body_decrypted = new TeaCryptor().decrypt(body_decrypted, user.txprotocol.tgtgtKey);
+			reader.update(body_decrypted);
+			header = reader.readBytes(1)[0];
+			this.parseTlv(reader.readRestBytesAndDestroy(), user);
+		}
+		if (header == 52)
+		{
+			System.out.println("密码错误");
+			System.exit(100);
+		}
+		else if (header == -5)
+		{
+			byte[] data = SendPackage.get00ba(this.user, "");
+			this.send(data);
+		}
+		else if (header == 0)
+		{
+			System.out.println("成功获取用户信息: Nick: " + this.user.nickName + " Age: " + this.user.age + " Sex: " + this.user.sex);
+			this.user.isLogined = true;
+			this.user.loginTime = new Date().getTime();
+			byte[] data = SendPackage.get0828(this.user);
+			this.send(data);
+		}
+		else
+		{
+			byte[] data = SendPackage.get0836(this.user, true);
+			this.send(data);
+		}
+	}
+
 	private void startHeatBeat()
 	{
 		this.ctx.executor().scheduleAtFixedRate(new Runnable(){
@@ -497,12 +573,12 @@ public class RingzuxHandler extends ChannelInboundHandlerAdapter
 								switch (emojiTlv.tag)
 								{
 									case 1:{
-										reader.update(emojiTlv.value);
+											reader.update(emojiTlv.value);
 											qqmessage.addEmoji(reader.readUnsignedByte());
 										}
 								}
 							}
-				    }break;
+						}break;
 					case 10:{//语音
 							reader.update(tlv.value);
 							reader.readBytes(1);
@@ -545,13 +621,13 @@ public class RingzuxHandler extends ChannelInboundHandlerAdapter
 							}
 						}break;
 					case 25:{//红包，不做解析
-						
-					}break;
+
+						}break;
 					case 14:{//不知道
-						
-					}break;
+
+						}break;
 					default:{
-							System.out.println("未知消息片段: "+tlv.tag);
+							System.out.println("未知消息片段: " + tlv.tag);
 							System.out.println(Util.byte2HexString(tlv.value));
 						}break;
 				}
@@ -587,7 +663,7 @@ public class RingzuxHandler extends ChannelInboundHandlerAdapter
 		List<Tlv> tlvs = Tlv.parseTlv(data);
 		for (Tlv tlv: tlvs)
 		{
-			TlvParser.parsetvl(tlv, user);
+			TlvParser.parseTlv(tlv, user);
 		}
 	}
 

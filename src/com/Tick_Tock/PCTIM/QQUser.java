@@ -27,7 +27,7 @@ public class QQUser
 	
 	public byte next;
 	
-	public byte[] packet00BaKey = Util.RandomKey();
+	public byte[] packet00BaKey = Util.randomKey();
 	
 	public byte packet00BaSequence=0x01;
 	
@@ -53,11 +53,24 @@ public class QQUser
 	
 	public TXProtocol txprotocol  = new TXProtocol();
 
-	public byte[] packet0825Key  = Util.RandomKey();
+	public byte[] packet0825Key  = Util.randomKey();
 
 	public boolean isLoginRedirected;
 
-	public byte[] packet0836Key1 = Util.RandomKey();
+	public byte[] packet0836Key1 = Util.randomKey();
+
+	public byte[] packet0818Key =Util.str_to_byte("A4 E3 0B 01 6C 84 BD C2 B0 17 61 2A 56 A1 A7 43");
+
+	public byte[] packet0819Key;
+
+	public byte[] packet0819Token;
+
+	public byte[] packet0819ImageId;
+
+	public byte[] packet0819Qrcode;
+
+	public byte[] token771;
+	
 	
 	public QQUser(long qq,byte[] pwd)
 	{
