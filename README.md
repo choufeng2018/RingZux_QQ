@@ -52,7 +52,7 @@ make run
 咨询androidqq加我叩:1959903082<br>
 学生勿扰，你买不起。<br>
 傻逼勿扰，我的时间不值得你去浪费...<br>
-安卓叩叩协议文档:
+安卓叩叩协议插件文档:
 https://saint-theana.github.io/Androidqq_Protocol_Doc/<br>
 安卓oo部分功能演示:https://b23.tv/av65388267<br>
 安卓oo部分功能演示2:https://b23.tv/av66492743<br>
